@@ -19,5 +19,6 @@ namespace GenericSerializerTests
         public string StringValue { get; set; }
 
         public TestSimpleStruct simpleStruct { get; set; }
+        public TestSimpleClass NextClass { get; set; }
     }
 }

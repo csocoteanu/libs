@@ -9,12 +9,15 @@ namespace GenericSerializer.XmlUtils
     internal static class Utils
     {
         internal const string kNullString = "null";
+        internal const string kComposyteType = "composyte_type";
+        internal const string kClassString = "class";
+        internal const string kStructString = "struct";
     }
 
     internal interface IXmlWriter : IDisposable
     {
         void WriteEndElement();
-        void WriteStartElement(string element);
+        void WriteStartElement(string element, string attributeName, string attributeValue);
         void WriteElementString(string element, string elementValue);
         void CloseDocument();
     }
@@ -58,9 +61,14 @@ namespace GenericSerializer.XmlUtils
             this.m_xmlWriter.WriteEndElement();
         }
 
-        public void WriteStartElement(string element)
+        public void WriteStartElement(string element, string attributeName, string attributeValue)
         {
             this.m_xmlWriter.WriteStartElement(element);
+
+            if (!string.IsNullOrEmpty(attributeName) && !string.IsNullOrEmpty(attributeValue))
+            {
+                this.m_xmlWriter.WriteAttributeString(attributeName, attributeValue);
+            }
         }
 
         public void WriteElementString(string element, string elementValue)

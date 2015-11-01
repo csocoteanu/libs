@@ -23,13 +23,14 @@ namespace GenericSerializer
         internal void Serialize(object instance)
         {
             string instanceTypeString = instance.GetType().FullName;
+            string compositeType = this.GetCompositeType(instance.GetType());
 
             if (instance != null)
             {
                 this.m_depth++;
 
-                this.m_writer.WriteStartElement(instanceTypeString);
-                this.SerializeProperties(instance);
+                this.m_writer.WriteStartElement(instanceTypeString, Utils.kComposyteType, compositeType);
+                this.SerializeProperties(instance, compositeType);
                 this.m_writer.WriteEndElement();
             }
             else
@@ -38,7 +39,12 @@ namespace GenericSerializer
             }
         }
 
-        protected void SerializeProperties(object instance)
+        private string GetCompositeType(Type type)
+        {
+            return this.IsStructType(type) ? Utils.kStructString : Utils.kClassString;
+        }
+
+        protected void SerializeProperties(object instance, string compositeType)
         {
             Type instanceType = instance.GetType();
             PropertyInfo[] properties = instanceType.GetProperties();
@@ -78,7 +84,7 @@ namespace GenericSerializer
 
         protected void SerializePrimitiveType(object instance, PropertyInfo property)
         {
-            bool isStruct = property.PropertyType.IsValueType && !property.PropertyType.IsPrimitive;
+            bool isStruct = this.IsStructType(property.PropertyType);
 
             if (!isStruct)
             {
@@ -92,6 +98,11 @@ namespace GenericSerializer
                 object structValue = property.GetValue(instance, null);
                 this.Serialize(structValue);
             }
+        }
+
+        private bool IsStructType(Type type)
+        {
+            return type.IsValueType && !type.IsPrimitive;
         }
 
         #region IDisposable Members
