@@ -45,15 +45,15 @@ namespace GenericSerializer
 
             foreach (var property in properties)
             {
+                if (!this.IsPropertySerializable(property))
+                    continue;
+
                 if (this.IsPrimitiveType(property))
                 {
                     this.SerializePrimitiveType(instance, property);
                 }
                 else
                 {
-                    if (!this.IsPropertySerializable(property))
-                        continue;
-
                     object propertyValue = property.GetValue(instance, null);
                     this.Serialize(propertyValue);
                 }
@@ -80,7 +80,7 @@ namespace GenericSerializer
         {
             bool isStruct = property.PropertyType.IsValueType && !property.PropertyType.IsPrimitive;
 
-            if (isStruct)
+            if (!isStruct)
             {
                 object value = property.GetValue(instance, null);
                 string valueString = (value != null) ? value.ToString() : Utils.kNullString;
@@ -89,13 +89,9 @@ namespace GenericSerializer
             }
             else
             {
-                this.SerializeStruct(instance, property);
+                object structValue = property.GetValue(instance, null);
+                this.Serialize(structValue);
             }
-        }
-
-        private void SerializeStruct(object instance, PropertyInfo property)
-        {
-            
         }
 
         #region IDisposable Members
