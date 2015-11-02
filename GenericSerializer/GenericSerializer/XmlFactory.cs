@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GenericSerializer.XmlUtils;
+using GenericSerializer.Serializer;
+using GenericSerializer.Deserializer;
 
-namespace GenericSerializer
+namespace GenericSerializer.Factory
 {
-    public static class XmlSerializerFactory
+    public static class XmlFactory
     {
         public static void Serialize(object instance, string outputPath)
         {
@@ -14,9 +16,10 @@ namespace GenericSerializer
             XmlGenericSerializer.Serialize(instance, writer);
         }
 
-        public static object Deserialize(string intputPath)
+        public static object Deserialize(string inputPath)
         {
-            return null;
+            IXmlReader reader = new XmlReaderWrapper(inputPath);
+            return XmlGenericDeserializer.Deserialize(reader);
         }
     }
 }

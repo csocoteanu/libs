@@ -1,27 +1,12 @@
-﻿using System;
+﻿using GenericSerializer.XmlUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace GenericSerializer.XmlUtils
+namespace GenericSerializer.Serializer
 {
-    internal static class Utils
-    {
-        internal const string kNullString = "null";
-        internal const string kComposyteType = "composyte_type";
-        internal const string kClassString = "class";
-        internal const string kStructString = "struct";
-    }
-
-    internal interface IXmlWriter : IDisposable
-    {
-        void WriteEndElement();
-        void WriteStartElement(string element, string attributeName, string attributeValue);
-        void WriteElementString(string element, string elementValue);
-        void CloseDocument();
-    }
-
     internal class XmlWriterWrapper : IXmlWriter
     {
         private string m_outputPath;
