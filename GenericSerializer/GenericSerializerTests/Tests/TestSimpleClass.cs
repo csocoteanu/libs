@@ -18,11 +18,11 @@ namespace GenericSerializerTests
 
     public class TestSimpleClass
     {
-        //public int IntValue { get; set; }
-        //public double DoubleValue { get { return 2.3; } }
-        //public string StringValue { get; set; }
+        public int IntValue { get; set; }
+        public double DoubleValue { get { return 2.3; } }
+        public string StringValue { get; set; }
 
-        //public TestSimpleStruct simpleStruct { get; set; }
+        public TestSimpleStruct simpleStruct { get; set; }
 
         public TestSimpleClass simpleClass { get; set; }
     }
