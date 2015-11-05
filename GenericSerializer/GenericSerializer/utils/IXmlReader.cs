@@ -7,6 +7,6 @@ namespace GenericSerializer.XmlUtils
 {
     internal interface IXmlReader : IDisposable
     {
-
+        XmlNodeInfo RootObject { get; }
     }
 }

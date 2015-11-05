@@ -15,9 +15,23 @@ namespace GenericSerializer.Deserializer
             this.m_reader = reader;
         }
 
+        protected object Deserialize(XmlNodeInfo root)
+        {
+            object instance = root.CreateDefaultInstance();
+
+            foreach (XmlNodeInfo nodeInfo in root.Children)
+            {
+                object memberValue = this.Deserialize(nodeInfo);
+                nodeInfo.SetMemberValue(instance, memberValue);
+            }
+
+            return instance;
+        }
+
         internal object Deserialize()
         {
-            return null;
+            XmlNodeInfo rootNodeInfo = this.m_reader.RootObject;
+            return this.Deserialize(rootNodeInfo);
         }
 
         internal static object Deserialize(IXmlReader reader)
@@ -36,7 +50,7 @@ namespace GenericSerializer.Deserializer
             {
                 this.m_reader.Dispose();
             }
-        } 
+        }
         #endregion
     }
 }

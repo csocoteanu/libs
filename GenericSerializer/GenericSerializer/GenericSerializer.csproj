@@ -76,6 +76,7 @@
     <Compile Include="utils\Extensions.cs" />
     <Compile Include="utils\IXmlReader.cs" />
     <Compile Include="utils\IXmlWriter.cs" />
+    <Compile Include="utils\XmlNodeInfo.cs" />
     <Compile Include="utils\XmlParsedEventArgs.cs" />
     <Compile Include="XmlFactory.cs" />
     <Compile Include="serializer\XmlWriterWrapper.cs" />

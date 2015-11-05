@@ -52,6 +52,8 @@ namespace GenericSerializerTests
         public void Serialize()
         {
             XmlFactory.Serialize(this.m_simpleClass, this.m_outputPath);
+
+            var @object = XmlFactory.Deserialize(this.m_outputPath);
         }
     }
 }

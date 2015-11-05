@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 
 namespace GenericSerializer.XmlUtils
 {
@@ -66,6 +67,19 @@ namespace GenericSerializer.XmlUtils
         public static string GetCompoundEmptyValueAsString(this Type type)
         {
             return type.IsStructType() ? XmlUtils.Constants.kEmptyStruct : XmlUtils.Constants.kNullString;
+        }
+
+        // //---------------------------XmlNode-------------------------------------------------
+        // -------------------------------------------------------------------------------------
+        internal static XmlNodeInfo ToXmlNodeInfo(this XmlNode node)
+        {
+            XmlNodeInfo nodeInfo = new XmlNodeInfo(node.Name, node.InnerText, node.ChildNodes);
+
+            // populate attributes
+            foreach (XmlAttribute attribute in node.Attributes)
+                nodeInfo[attribute.Name] = attribute.Value;
+
+            return nodeInfo;
         }
     }
 }

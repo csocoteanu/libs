@@ -10,49 +10,22 @@ namespace GenericSerializer.Deserializer
     internal class XmlReaderWrapper : IXmlReader
     {
         private string m_inputPath;
-        private XmlReader m_reader;
-
-        public delegate void OnXmlNodeParsed(object sender, XmlParsedEventArgs args);
-        public OnXmlNodeParsed OnNodeParsed;
+        private XmlDocument m_xmlDocument;
 
         public XmlReaderWrapper(string inputPath)
         {
             this.m_inputPath = inputPath;
-            m_reader = XmlReader.Create(inputPath);
+            this.m_xmlDocument = new XmlDocument();
+
+            this.m_xmlDocument.Load(this.m_inputPath);
         }
 
-        public void ReadFully()
-        {
-            while (m_reader.Read())
-            {
-                switch (m_reader.NodeType)
-                {
-                    case XmlNodeType.Attribute:
-                        break;
-                    case XmlNodeType.Element:
-                        break;
-                    case XmlNodeType.EndElement:
-                        if (this.OnNodeParsed != null)
-                            this.OnNodeParsed(this, new XmlParsedEventArgs(eXmlItem.kNode, null));
-                        break;
-                    case XmlNodeType.XmlDeclaration:
-                    case XmlNodeType.ProcessingInstruction:
-                        break;
-                    case XmlNodeType.Text:
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        #region IXmlReader
+        public void Dispose() { }
 
-        #region IDisposable
-        public void Dispose()
+        public XmlNodeInfo RootObject
         {
-            if (this.m_reader != null)
-            {
-                this.m_reader.Close();
-            }
+            get { return this.m_xmlDocument.ChildNodes[1].ToXmlNodeInfo(); }
         }
         #endregion
     }
