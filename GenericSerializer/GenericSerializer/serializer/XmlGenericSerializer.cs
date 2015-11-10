@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using GenericSerializer.XmlUtils;
+using GenericSerializer.XmlUtils.Extensions;
 
 namespace GenericSerializer.Serializer
 {

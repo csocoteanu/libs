@@ -73,11 +73,11 @@
     <Compile Include="serializer\XmlGenericSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\Constants.cs" />
-    <Compile Include="utils\Extensions.cs" />
-    <Compile Include="utils\IXmlReader.cs" />
-    <Compile Include="utils\IXmlWriter.cs" />
-    <Compile Include="utils\XmlNodeInfo.cs" />
-    <Compile Include="utils\XmlParsedEventArgs.cs" />
+    <Compile Include="utils\Extensions.Reflection.cs" />
+    <Compile Include="utils\Extensions.Xml.cs" />
+    <Compile Include="deserializer\IXmlReader.cs" />
+    <Compile Include="serializer\IXmlWriter.cs" />
+    <Compile Include="deserializer\XmlNodeInfo.cs" />
     <Compile Include="XmlFactory.cs" />
     <Compile Include="serializer\XmlWriterWrapper.cs" />
   </ItemGroup>

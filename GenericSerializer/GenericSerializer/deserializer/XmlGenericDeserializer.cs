@@ -1,28 +1,33 @@
 ﻿using GenericSerializer.XmlUtils;
+using GenericSerializer.XmlUtils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace GenericSerializer.Deserializer
 {
-    internal class XmlGenericDeserializer : IDisposable
+    internal class XmlGenericDeserializer<T> : IDisposable
     {
-        protected IXmlReader m_reader;
+        protected IXmlReader<T> m_reader;
 
-        protected XmlGenericDeserializer(IXmlReader reader)
+        protected XmlGenericDeserializer(IXmlReader<T> reader)
         {
             this.m_reader = reader;
         }
 
-        protected object Deserialize(XmlNodeInfo root)
+        protected object Deserialize(IXmlNode<T> root)
         {
             object instance = root.CreateDefaultInstance();
 
-            foreach (XmlNodeInfo nodeInfo in root.Children)
+            if (instance != null)
             {
-                object memberValue = this.Deserialize(nodeInfo);
-                nodeInfo.SetMemberValue(instance, memberValue);
+                foreach (IXmlNode<T> node in this.m_reader.GetChildNodes(root))
+                {
+                    object memberValue = (node.IsCompositeNode()) ? this.Deserialize(node) : node.NodeText;
+                    instance.SetMemberValue(node.Tag, memberValue);
+                } 
             }
 
             return instance;
@@ -30,14 +35,14 @@ namespace GenericSerializer.Deserializer
 
         internal object Deserialize()
         {
-            XmlNodeInfo rootNodeInfo = this.m_reader.RootObject;
+            IXmlNode<T> rootNodeInfo = this.m_reader.RootObject;
             return this.Deserialize(rootNodeInfo);
         }
 
-        internal static object Deserialize(IXmlReader reader)
+        internal static object Deserialize(IXmlReader<T> reader)
         {
             object result = null;
-            using (XmlGenericDeserializer xmlDeserializer = new XmlGenericDeserializer(reader))
+            using (XmlGenericDeserializer<T> xmlDeserializer = new XmlGenericDeserializer<T>(reader))
                 result = xmlDeserializer.Deserialize();
 
             return result;

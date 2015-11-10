@@ -5,6 +5,7 @@ using System.Text;
 using GenericSerializer.XmlUtils;
 using GenericSerializer.Serializer;
 using GenericSerializer.Deserializer;
+using System.Xml;
 
 namespace GenericSerializer.Factory
 {
@@ -18,8 +19,8 @@ namespace GenericSerializer.Factory
 
         public static object Deserialize(string inputPath)
         {
-            IXmlReader reader = new XmlReaderWrapper(inputPath);
-            return XmlGenericDeserializer.Deserialize(reader);
+            IXmlReader<XmlNode> reader = new XmlReaderWrapper(inputPath);
+            return XmlGenericDeserializer<XmlNode>.Deserialize(reader);
         }
     }
 }

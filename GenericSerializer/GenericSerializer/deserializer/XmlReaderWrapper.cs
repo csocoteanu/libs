@@ -1,4 +1,5 @@
 ﻿using GenericSerializer.XmlUtils;
+using GenericSerializer.XmlUtils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Xml;
 
 namespace GenericSerializer.Deserializer
 {
-    internal class XmlReaderWrapper : IXmlReader
+    internal class XmlReaderWrapper : IXmlReader<XmlNode>
     {
         private string m_inputPath;
         private XmlDocument m_xmlDocument;
@@ -23,10 +24,29 @@ namespace GenericSerializer.Deserializer
         #region IXmlReader
         public void Dispose() { }
 
-        public XmlNodeInfo RootObject
+        public IXmlNode<XmlNode> RootObject
         {
-            get { return this.m_xmlDocument.ChildNodes[1].ToXmlNodeInfo(); }
+            get
+            {
+                if (this.m_xmlDocument.ChildNodes == null ||
+                    this.m_xmlDocument.ChildNodes.Count < 1)
+                {
+                    return null;
+                }
+
+                return this.m_xmlDocument.ChildNodes[1].ToXmlNodeInfo();
+            }
         }
         #endregion
+
+
+        public IEnumerable<IXmlNode<XmlNode>> GetChildNodes(IXmlNode<XmlNode> node)
+        {
+            foreach (XmlNode domChild in node.DomOffset.ChildNodes)
+            {
+                string textNode = domChild.GetImmediateNodeText();
+                yield return domChild.ToXmlNodeInfo(textNode);
+            }
+        }
     }
 }

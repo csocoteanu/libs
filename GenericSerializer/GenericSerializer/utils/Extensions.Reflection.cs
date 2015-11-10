@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace GenericSerializer.XmlUtils
+namespace GenericSerializer.XmlUtils.Extensions
 {
-    public static class Extensions
+    public static partial class Reflection
     {
         // //---------------------------Type----------------------------------------------------
         // -------------------------------------------------------------------------------------
@@ -69,17 +69,30 @@ namespace GenericSerializer.XmlUtils
             return type.IsStructType() ? XmlUtils.Constants.kEmptyStruct : XmlUtils.Constants.kNullString;
         }
 
-        // //---------------------------XmlNode-------------------------------------------------
-        // -------------------------------------------------------------------------------------
-        internal static XmlNodeInfo ToXmlNodeInfo(this XmlNode node)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        internal static object CreateDefaultInstance<T>(this IXmlNode<T> node)
         {
-            XmlNodeInfo nodeInfo = new XmlNodeInfo(node.Name, node.InnerText, node.ChildNodes);
+            Type instanceType = Type.GetType(node.Tag);
+            return Activator.CreateInstance(instanceType);
+        }
 
-            // populate attributes
-            foreach (XmlAttribute attribute in node.Attributes)
-                nodeInfo[attribute.Name] = attribute.Value;
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="memberValue"></param>
+        internal static void SetMemberValue(this object instance, string propertyName, object memberValue)
+        {
+            Type instanceType = instance.GetType();
+            PropertyInfo propertyNameInfo = instanceType.GetProperty(propertyName);
 
-            return nodeInfo;
+            propertyNameInfo.SetValue(instance, memberValue, null);
         }
     }
 }
