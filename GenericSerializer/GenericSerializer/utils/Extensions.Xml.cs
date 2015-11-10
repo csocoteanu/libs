@@ -35,7 +35,7 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <returns></returns>
         internal static bool IsCompositeNode<T>(this IXmlNode<T> node)
         {
-            return !string.IsNullOrEmpty(node[Constants.kComposyteType]);
+            return !string.IsNullOrEmpty(node[Constants.kCompositeType]);
         }
 
         /// <summary>
@@ -46,8 +46,13 @@ namespace GenericSerializer.XmlUtils.Extensions
         internal static string GetImmediateNodeText(this XmlNode node)
         {
             string nodeText = null;
-            if (node.ChildNodes.Count == 1 && node.ChildNodes[1].ChildNodes.Count == 0)
-                nodeText = node.ChildNodes[1].Value;
+
+            if (node.ChildNodes.Count == 1 &&
+                node.ChildNodes[0].ChildNodes.Count == 0 &&
+                node.ChildNodes[0].Value != Constants.kNullString)
+            {
+                nodeText = node.ChildNodes[0].Value;
+            }
 
             return nodeText;
         }

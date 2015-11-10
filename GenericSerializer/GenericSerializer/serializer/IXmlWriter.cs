@@ -8,8 +8,8 @@ namespace GenericSerializer.XmlUtils
     internal interface IXmlWriter : IDisposable
     {
         void WriteEndElement();
-        void WriteStartElement(string element, string attributeName, string attributeValue);
-        void WriteElementString(string element, string elementValue);
+        void WriteStartElement(string element, params string[] attributes);
+        void WriteElementString(string element, string elementValue, params string[] atttributes);
         void CloseDocument();
     }
 }

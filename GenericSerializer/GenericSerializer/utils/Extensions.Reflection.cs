@@ -77,7 +77,11 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <returns></returns>
         internal static object CreateDefaultInstance<T>(this IXmlNode<T> node)
         {
-            Type instanceType = Type.GetType(node.Tag);
+            string assemblyName = node[Constants.kAssembly];
+            string instanceTypeString = node[Constants.kMemberType];
+            Assembly typeAssembly = Assembly.Load(assemblyName);
+            Type instanceType = typeAssembly.GetType(instanceTypeString);
+
             return Activator.CreateInstance(instanceType);
         }
 
@@ -89,10 +93,19 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <param name="memberValue"></param>
         internal static void SetMemberValue(this object instance, string propertyName, object memberValue)
         {
-            Type instanceType = instance.GetType();
-            PropertyInfo propertyNameInfo = instanceType.GetProperty(propertyName);
+            try
+            {
+                Type instanceType = instance.GetType();
+                PropertyInfo propertyNameInfo = instanceType.GetProperty(propertyName);
 
-            propertyNameInfo.SetValue(instance, memberValue, null);
+                propertyNameInfo.SetValue(instance,
+                                          Convert.ChangeType(memberValue, propertyNameInfo.PropertyType),
+                                          null);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

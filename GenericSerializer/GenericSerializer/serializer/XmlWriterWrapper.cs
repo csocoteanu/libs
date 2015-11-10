@@ -39,6 +39,19 @@ namespace GenericSerializer.Serializer
             this.m_xmlWriter.WriteStartDocument();
         }
 
+        private void WriteAttributes(params string[] attributes)
+        {
+            for (int i = 0; i + 1 < attributes.Length; i += 2)
+            {
+                string attributeName = attributes[i];
+                string attributeValue = attributes[i + 1];
+                if (!string.IsNullOrEmpty(attributeName) && !string.IsNullOrEmpty(attributeValue))
+                {
+                    this.m_xmlWriter.WriteAttributeString(attributeName, attributeValue);
+                }
+            }
+        }
+
         #region IXmlWriter Members
 
         public void WriteEndElement()
@@ -46,19 +59,19 @@ namespace GenericSerializer.Serializer
             this.m_xmlWriter.WriteEndElement();
         }
 
-        public void WriteStartElement(string element, string attributeName, string attributeValue)
+        public void WriteStartElement(string element, params string[] attributes)
         {
             this.m_xmlWriter.WriteStartElement(element);
-
-            if (!string.IsNullOrEmpty(attributeName) && !string.IsNullOrEmpty(attributeValue))
-            {
-                this.m_xmlWriter.WriteAttributeString(attributeName, attributeValue);
-            }
+            this.WriteAttributes(attributes);
         }
 
-        public void WriteElementString(string element, string elementValue)
+        public void WriteElementString(string element, string elementValue, params string[] attributes)
         {
-            this.m_xmlWriter.WriteElementString(element, elementValue);
+            this.WriteStartElement(element, attributes);
+            char[] arr = elementValue.ToCharArray();
+            this.m_xmlWriter.WriteChars(arr, 0, arr.Length);
+
+            this.WriteEndElement();
         }
 
         public void CloseDocument()
