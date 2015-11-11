@@ -1,0 +1,8 @@
+- add framework for depency injection
+- support for addnotations and lists/arrays
+- error paths handling:
+  i.   inheritance class vs sub-class serialization
+  ii.  circular references
+  iii. other error paths ??
+  iv.  complete the test cases
+- implement the rest of the serialization/deserialization mechanisms
