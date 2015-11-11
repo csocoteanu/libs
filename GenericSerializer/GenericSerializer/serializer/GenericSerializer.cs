@@ -10,11 +10,11 @@ using GenericSerializer.XmlUtils.Extensions;
 
 namespace GenericSerializer.Serializer
 {
-    internal class XmlGenericSerializer : IDisposable
+    public class GenericSerializer : IDisposable
     {
-        protected IXmlWriter m_writer;
+        protected IWriter m_writer;
 
-        protected XmlGenericSerializer(IXmlWriter writer)
+        protected GenericSerializer(IWriter writer)
         {
             this.m_writer = writer;
         }
@@ -105,12 +105,6 @@ namespace GenericSerializer.Serializer
                                              Constants.kMemberType, property.PropertyType.FullName);
         }
 
-        internal static void Serialize(object instance, IXmlWriter writer)
-        {
-            using (XmlGenericSerializer xmlSerializer = new XmlGenericSerializer(writer))
-                xmlSerializer.Serialize(instance, Constants.kRootElement);
-        }
-
         #region IDisposable Members
 
         public void Dispose()
@@ -120,5 +114,11 @@ namespace GenericSerializer.Serializer
         }
 
         #endregion
+
+        public static void Serialize(object instance, IWriter writer)
+        {
+            using (GenericSerializer xmlSerializer = new GenericSerializer(writer))
+                xmlSerializer.Serialize(instance, Constants.kRootElement);
+        }
     }
 }

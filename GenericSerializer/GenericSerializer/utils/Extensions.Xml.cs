@@ -16,9 +16,9 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <param name="node"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        internal static IXmlNode<XmlNode> ToXmlNodeInfo(this XmlNode node, string text=null)
+        internal static INode<XmlNode> ToXmlNodeInfo(this XmlNode node, string text=null)
         {
-            XmlNodeInfo<XmlNode> nodeInfo = new XmlNodeInfo<XmlNode>(node.Name, text, node);
+            NodeInfo<XmlNode> nodeInfo = new NodeInfo<XmlNode>(node.Name, text, node);
 
             // populate attributes
             foreach (XmlAttribute attribute in node.Attributes)
@@ -33,7 +33,7 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
         /// <returns></returns>
-        internal static bool IsCompositeNode<T>(this IXmlNode<T> node)
+        internal static bool IsCompositeNode<T>(this INode<T> node)
         {
             return !string.IsNullOrEmpty(node[Constants.kCompositeType]);
         }

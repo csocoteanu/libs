@@ -6,19 +6,19 @@ using System.Xml;
 
 namespace GenericSerializer.XmlUtils
 {
-    internal class XmlAttributes : Dictionary<string, string> { }
+    internal class NodeAttributes : Dictionary<string, string> { }
 
-    internal interface IXmlNode<T>
+    public interface INode<T>
     {
         string Tag { get; }
         string NodeText { get; }
         string this[string atttributeName] { get; set; }
-        T DomOffset { get; }
+        T DocumentOffset { get; }
     }
 
-    internal interface IXmlReader<T> : IDisposable
+    public interface IReader<T> : IDisposable
     {
-        IXmlNode<T> RootObject { get; }
-        IEnumerable<IXmlNode<T>> GetChildNodes(IXmlNode<T> node);
+        INode<T> RootObject { get; }
+        IEnumerable<INode<T>> GetChildNodes(INode<T> node);
     }
 }

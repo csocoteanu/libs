@@ -1,5 +1,5 @@
 ﻿using GenericSerializer;
-using GenericSerializer.Factory;
+using GenericSerializer.Factories;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -51,9 +51,8 @@ namespace GenericSerializerTests
         [Test]
         public void Serialize()
         {
-            XmlFactory.Serialize(this.m_simpleClass, this.m_outputPath);
-
-            var @object = XmlFactory.Deserialize(this.m_outputPath);
+            Factory.Serialize(this.m_simpleClass, Factory.eSerializationType.kXML, this.m_outputPath);
+            var @object = Factory.Deserialize(this.m_outputPath, Factory.eSerializationType.kXML);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GenericSerializer.XmlUtils
 {
-    internal interface IXmlWriter : IDisposable
+    public interface IWriter : IDisposable
     {
         void WriteEndElement();
         void WriteStartElement(string element, params string[] attributes);

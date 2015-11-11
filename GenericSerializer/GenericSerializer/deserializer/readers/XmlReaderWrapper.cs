@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace GenericSerializer.Deserializer
 {
-    internal class XmlReaderWrapper : IXmlReader<XmlNode>
+    internal class XmlReaderWrapper : IReader<XmlNode>
     {
         private string m_inputPath;
         private XmlDocument m_xmlDocument;
@@ -24,7 +24,7 @@ namespace GenericSerializer.Deserializer
         #region IXmlReader
         public void Dispose() { }
 
-        public IXmlNode<XmlNode> RootObject
+        public INode<XmlNode> RootObject
         {
             get
             {
@@ -40,9 +40,9 @@ namespace GenericSerializer.Deserializer
         #endregion
 
 
-        public IEnumerable<IXmlNode<XmlNode>> GetChildNodes(IXmlNode<XmlNode> node)
+        public IEnumerable<INode<XmlNode>> GetChildNodes(INode<XmlNode> node)
         {
-            foreach (XmlNode domChild in node.DomOffset.ChildNodes)
+            foreach (XmlNode domChild in node.DocumentOffset.ChildNodes)
             {
                 string textNode = domChild.GetImmediateNodeText();
                 yield return domChild.ToXmlNodeInfo(textNode);

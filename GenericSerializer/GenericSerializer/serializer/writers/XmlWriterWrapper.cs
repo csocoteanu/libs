@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace GenericSerializer.Serializer
 {
-    internal class XmlWriterWrapper : IXmlWriter
+    internal class XmlWriterWrapper : IWriter
     {
         private string m_outputPath;
         private XmlWriter m_xmlWriter;

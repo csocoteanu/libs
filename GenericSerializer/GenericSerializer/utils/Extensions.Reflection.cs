@@ -75,7 +75,7 @@ namespace GenericSerializer.XmlUtils.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
         /// <returns></returns>
-        internal static object CreateDefaultInstance<T>(this IXmlNode<T> node)
+        internal static object CreateDefaultInstance<T>(this INode<T> node)
         {
             string assemblyName = node[Constants.kAssembly];
             string instanceTypeString = node[Constants.kMemberType];

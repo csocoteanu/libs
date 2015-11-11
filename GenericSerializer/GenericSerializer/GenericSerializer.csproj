@@ -67,19 +67,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="deserializer\XmlGenericDeserializer.cs" />
-    <Compile Include="deserializer\XmlReaderWrapper.cs" />
+    <Compile Include="deserializer\GenericDeserializer.cs" />
+    <Compile Include="deserializer\readers\XmlReaderWrapper.cs" />
     <Compile Include="GenericSerializableAttribute.cs" />
-    <Compile Include="serializer\XmlGenericSerializer.cs" />
+    <Compile Include="serializer\GenericSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\Constants.cs" />
     <Compile Include="utils\Extensions.Reflection.cs" />
     <Compile Include="utils\Extensions.Xml.cs" />
-    <Compile Include="deserializer\IXmlReader.cs" />
-    <Compile Include="serializer\IXmlWriter.cs" />
-    <Compile Include="deserializer\XmlNodeInfo.cs" />
-    <Compile Include="XmlFactory.cs" />
-    <Compile Include="serializer\XmlWriterWrapper.cs" />
+    <Compile Include="deserializer\readers\IReader.cs" />
+    <Compile Include="serializer\writers\IWriter.cs" />
+    <Compile Include="deserializer\readers\NodeInfo.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="serializer\writers\XmlWriterWrapper.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
