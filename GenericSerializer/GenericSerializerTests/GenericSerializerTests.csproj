@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\BinaryTestClass.cs" />
     <Compile Include="Tests\TestSimpleClass.cs" />
   </ItemGroup>
   <ItemGroup>
