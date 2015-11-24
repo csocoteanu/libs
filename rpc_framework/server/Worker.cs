@@ -8,17 +8,50 @@ using System.Threading.Tasks;
 
 namespace server
 {
-    public class Worker
+    public abstract class BaseWorker
     {
-        private Thread m_thread = null;
+        protected Thread m_thread = null;
 
-        public Worker()
+        protected abstract void DoWork();
+        protected abstract void OnStartWork();
+        protected abstract void OnStopWork();
+
+        public BaseWorker()
         {
             this.m_thread = new Thread(new ThreadStart(this.DoWork));
             this.m_thread.Name = Utils.kWorkerName;
         }
 
-        private void DoWork()
+        public void StartWork()
+        {
+            this.OnStartWork();
+            this.m_thread.Start();
+        }
+
+        public void StopWork()
+        {
+            this.OnStopWork();
+            this.m_thread.Abort();
+        }
+    }
+
+    public class Processor : BaseWorker
+    {
+        protected override void DoWork() { }
+        protected override void OnStartWork() { }
+        protected override void OnStopWork() { }
+    }
+
+    public class Worker : BaseWorker
+    {
+        private Processor m_processor = null;
+
+        public Worker() : base()
+        {
+            m_processor = new Processor();
+        }
+
+        protected override void DoWork()
         {
             while (true)
             {
@@ -28,14 +61,14 @@ namespace server
             }
         }
 
-        public void StartWork()
+        protected override void OnStartWork()
         {
-            this.m_thread.Start();
+            this.m_processor.StartWork();
         }
 
-        public void StopWork()
+        protected override void OnStopWork()
         {
-            this.m_thread.Abort();
+            this.m_processor.StopWork();
         }
     }
 }

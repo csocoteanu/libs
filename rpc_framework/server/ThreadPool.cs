@@ -13,8 +13,6 @@ namespace server
     public class ThreadPool : IDisposable
     {
         public static readonly ThreadPool Instance = new ThreadPool();
-
-        private ushort m_threadPerCore = 0;
         private int m_threadCount = 0;
 
         private ReadersWritersImpl<Socket> m_readersWritersImpl = null;
@@ -22,8 +20,7 @@ namespace server
 
         private ThreadPool()
         {
-            this.m_threadPerCore = server.Properties.Settings.Default.kThreadsPerCore;
-            this.m_threadCount = Environment.ProcessorCount * this.m_threadPerCore;
+            this.m_threadCount = Environment.ProcessorCount;
 
             this.m_readersWritersImpl = new ReadersWritersImpl<Socket>(this.m_threadCount);
 

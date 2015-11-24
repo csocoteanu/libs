@@ -49,14 +49,5 @@ namespace server.Properties {
                 return ((ushort)(this["kMaxConnections"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public ushort kThreadsPerCore {
-            get {
-                return ((ushort)(this["kThreadsPerCore"]));
-            }
-        }
     }
 }
