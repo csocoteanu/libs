@@ -50,7 +50,7 @@ namespace server
             return sock;
         }
 
-        private void StartServer()
+        private void RunServer()
         {
             Thread.CurrentThread.Name = Utils.kDispatcherName;
             Console.WriteLine(string.Format("Starting RPC Server. Listening on port: {0}", this.m_port));
@@ -75,13 +75,13 @@ namespace server
             {
                 this.m_serverThread = new Thread(new ThreadStart(() =>
                 {
-                    this.StartServer();
+                    this.RunServer();
                 }));
                 this.m_serverThread.Start();
             }
             else
             {
-                this.StartServer();
+                this.RunServer();
             }
         }
 
