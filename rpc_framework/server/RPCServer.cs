@@ -50,25 +50,37 @@ namespace server
             return sock;
         }
 
-        public void Start()
+        private void StartServer()
+        {
+            Console.WriteLine(string.Format("Starting RPC Server. Listening on port: {0}", this.m_port));
+            while (this.m_isRunning)
+            {
+                lock (this)
+                {
+                    if (!this.m_isRunning)
+                        break;
+                }
+
+                Socket newConnection = this.m_connectionSock.Accept();
+                ThreadPool.Instance.AddTask(newConnection);
+            }
+        }
+
+        public void Start(bool sendToBackground = true)
         {
             this.m_isRunning = true;
-            this.m_serverThread = new Thread(new ThreadStart(() =>
+            if (sendToBackground)
             {
-                while (this.m_isRunning)
+                this.m_serverThread = new Thread(new ThreadStart(() =>
                 {
-                    lock (this)
-                    {
-                        if (!this.m_isRunning)
-                            break;
-                    }
-
-                    Socket newConnection = this.m_connectionSock.Accept();
-                    
-                }
-            }));
-
-            this.m_serverThread.Start();
+                    this.StartServer();
+                }));
+                this.m_serverThread.Start();
+            }
+            else
+            {
+                this.StartServer();
+            }
         }
 
         public void Stop()
@@ -78,7 +90,7 @@ namespace server
                 this.m_isRunning = false;
             }
 
-            if (this.m_serverThread.IsAlive)
+            if (this.m_serverThread != null && this.m_serverThread.IsAlive)
                 this.m_serverThread.Join();
         }
     }
