@@ -52,7 +52,9 @@ namespace server
 
         private void StartServer()
         {
+            Thread.CurrentThread.Name = Utils.kDispatcherName;
             Console.WriteLine(string.Format("Starting RPC Server. Listening on port: {0}", this.m_port));
+
             while (this.m_isRunning)
             {
                 lock (this)
@@ -91,7 +93,9 @@ namespace server
             }
 
             if (this.m_serverThread != null && this.m_serverThread.IsAlive)
-                this.m_serverThread.Join();
+            {
+                this.m_serverThread.Abort();
+            }
         }
     }
 }

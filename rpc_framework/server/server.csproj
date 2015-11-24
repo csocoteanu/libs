@@ -45,8 +45,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ReadersWritersImpl.cs" />
     <Compile Include="RPCServer.cs" />
     <Compile Include="ThreadPool.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
