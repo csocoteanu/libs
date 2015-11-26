@@ -19,6 +19,7 @@ namespace client_test
                 Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 sock.Connect(configuredEndPoint);
+                sock.Send(Encoding.UTF8.GetBytes("Ana are mere"));
 
                 Console.WriteLine("Succesfully conected to remote endpoint!");
             }
@@ -30,5 +31,13 @@ namespace client_test
             Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
         }
+
+        static byte[] GetBytes(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
     }
 }

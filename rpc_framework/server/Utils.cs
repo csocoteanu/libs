@@ -14,18 +14,19 @@ namespace server
         public const string kWorkerName = "Worker";
         public const string kDispatcherName = "Dispatcher";
 
-        public static void DebugInfo(Socket sock)
+        public static void DebugInfo(Socket sock, string auxMessage = null)
         {
             IPEndPoint ipRemote = (IPEndPoint)sock.RemoteEndPoint;
             IPEndPoint ipLocal = (IPEndPoint)sock.LocalEndPoint;
             int tid = Thread.CurrentThread.ManagedThreadId;
 
-            Console.WriteLine(string.Format("[Thread: {0}] Local: {1}: {2} Remote: {3}: {4}",
+            Console.WriteLine(string.Format("[Thread: {0}] Local: {1}: {2} Remote: {3}: {4} :: {5}",
                 string.Format("({0}:{1})", Thread.CurrentThread.Name, tid), 
                 ipLocal.Address.ToString(), 
                 ipLocal.Port, 
                 ipRemote.Address.ToString(), 
-                ipRemote.Port));
+                ipRemote.Port,
+                string.IsNullOrEmpty(auxMessage) ? string.Empty : auxMessage));
         }
     }
 }

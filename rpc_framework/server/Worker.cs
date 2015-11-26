@@ -37,7 +37,56 @@ namespace server
 
     public class Processor : BaseWorker
     {
-        protected override void DoWork() { }
+        private List<Socket> m_allConnections = null;
+        private ReadersWritersImpl<Socket> m_clientConnections = null;
+
+        public Processor(ReadersWritersImpl<Socket> connections)
+        {
+            m_allConnections = new List<Socket>();
+            m_clientConnections = connections;
+        }
+
+        bool SocketConnected(Socket s)
+        {
+            bool part1 = s.Poll(1000, SelectMode.SelectRead);
+            bool part2 = (s.Available == 0);
+            if (part1 && part2)
+                return false;
+            else
+                return true;
+        }
+
+        protected override void DoWork()
+        {
+            while (true)
+            {
+                IList<Socket> newConnections = m_clientConnections.ReadAllTasks();
+                if (newConnections != null)
+                    m_allConnections.AddRange(newConnections);
+
+                for (int i = 0; i < m_allConnections.Count; )
+                {
+                    Socket connection = m_allConnections[i];
+                    if (SocketConnected(connection) && connection.Connected)
+                    {
+                        if (connection.Available > 0)
+                        {
+                            byte[] arr = new byte[1024];
+                            connection.Receive(arr);
+                            Console.WriteLine("Received: " + System.Text.Encoding.UTF8.GetString(arr).TrimEnd('\0')); 
+                        }
+
+                        i++;
+                    }
+                    else
+                    {
+                        m_allConnections.Remove(connection);
+                        Utils.DebugInfo(connection, "Closing connection!");
+                    }
+                }
+            }
+        }
+
         protected override void OnStartWork() { }
         protected override void OnStopWork() { }
     }
@@ -45,19 +94,23 @@ namespace server
     public class Worker : BaseWorker
     {
         private Processor m_processor = null;
+        private ReadersWritersImpl<Socket> m_clientConnections = null;
 
-        public Worker() : base()
+        public Worker()
         {
-            m_processor = new Processor();
+            m_clientConnections = new ReadersWritersImpl<Socket>(2);
+            m_processor = new Processor(m_clientConnections);
         }
 
         protected override void DoWork()
         {
             while (true)
             {
-                var task = ThreadPool.Instance.GetTask();
-                if (task != null)
-                    Utils.DebugInfo((Socket)task);
+                var connection = ThreadPool.Instance.GetTask();
+                if (connection != null)
+                {
+                    m_clientConnections.WriteTask(connection);
+                }
             }
         }
 
