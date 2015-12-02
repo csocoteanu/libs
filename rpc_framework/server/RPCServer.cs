@@ -53,7 +53,7 @@ namespace server
         private void RunServer()
         {
             Thread.CurrentThread.Name = Utils.kDispatcherName;
-            Console.WriteLine(string.Format("Starting RPC Server. Listening on port: {0}", this.m_port));
+            Console.WriteLine(string.Format("Starting RPC Server: PID - {0}. Listening on port: {1}", System.Diagnostics.Process.GetCurrentProcess().Id, this.m_port));
 
             while (this.m_isRunning)
             {
@@ -64,7 +64,8 @@ namespace server
                 }
 
                 Socket newConnection = this.m_connectionSock.Accept();
-                ThreadPool.Instance.AddTask(newConnection);
+                // RWThreadPool.Instance.AddTask(newConnection);
+                BlockingQueueThreadPool.Instance.AddTask(newConnection);
             }
         }
 

@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace server
 {
-    public class ReadersWritersImpl<T>
-        where T : class
+    public class ReadersWritersImpl<T> : IRWLock<T>
     {
         private int m_readCount = 0;
         private int m_maxThreads = 0;
@@ -63,41 +62,6 @@ namespace server
             this.m_readCountAccess.Release();        // release access to readCount
 
             return task;
-        }
-
-        public IList<T> ReadAllTasks()
-        {
-            IList<T> result = null;
-
-            // wait in line to be serviced
-            this.m_serviceQueue.WaitOne();
-            this.m_readCountAccess.WaitOne();        // request exclusive access to readCount
-            // <ENTER>
-            if (this.m_readCount == 0)         // if there are no readers already reading:
-                this.m_resourceAccess.WaitOne();     // request resource access for readers (writers blocked)
-            this.m_readCount++;                // update count of active readers
-            // </ENTER>
-            this.m_serviceQueue.Release();           // let next in line be serviced
-            this.m_readCountAccess.Release();        // release access to readCount
-
-            // <READ>
-            // reading is performed
-            if (this.m_tasks.Count > 0)
-            {
-                result = this.m_tasks.ToList();
-                this.m_tasks.Clear();
-            }
-            // </READ>
-
-            this.m_readCountAccess.WaitOne();        // request exclusive access to readCount
-            // <EXIT>
-            this.m_readCount--;                // update count of active readers
-            if (this.m_readCount == 0)         // if there are no readers left:
-                this.m_resourceAccess.Release();     // release resource access for all
-            // </EXIT>
-            this.m_readCountAccess.Release();        // release access to readCount
-
-            return result;
         }
 
         public void WriteTask(T task)

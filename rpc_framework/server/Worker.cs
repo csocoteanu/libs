@@ -8,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace server
 {
-    public abstract class BaseWorker
+    public abstract class BaseWorker<T>
     {
+        protected IRWLock<T> m_rwLock = null;
+        protected IRWFactory<T> m_rwFactory = null;
         protected Thread m_thread = null;
 
         protected abstract void DoWork();
         protected abstract void OnStartWork();
         protected abstract void OnStopWork();
 
-        public BaseWorker()
+        public BaseWorker(IRWLock<T> rwLock, IRWFactory<T> rwFactory)
         {
+            this.m_rwLock = rwLock;
+            this.m_rwFactory = rwFactory;
+
             this.m_thread = new Thread(new ThreadStart(this.DoWork));
             this.m_thread.Name = Utils.kWorkerName;
         }
@@ -33,20 +38,57 @@ namespace server
             this.OnStopWork();
             this.m_thread.Abort();
         }
-    }
 
-    public class Processor : BaseWorker
-    {
-        private List<Socket> m_allConnections = null;
-        private ReadersWritersImpl<Socket> m_clientConnections = null;
-
-        public Processor(ReadersWritersImpl<Socket> connections)
+        public void WriteTask(T task)
         {
-            m_allConnections = new List<Socket>();
-            m_clientConnections = connections;
+            if (this.m_rwLock != null)
+            {
+                this.m_rwLock.WriteTask(task);
+            }
         }
 
-        bool SocketConnected(Socket s)
+        public T ReadTask()
+        {
+            return (this.m_rwLock != null) ? this.m_rwLock.ReadNextTask() : default(T);
+        }
+    }
+
+    public class DataProcessor : BaseWorker<string>
+    {
+        public DataProcessor(IRWLock<string> rwLock, IRWFactory<string> rwFactory) : base(rwLock, rwFactory) { }
+
+        protected override void DoWork()
+        {
+            while (true)
+            {
+                string data = this.m_rwLock.ReadNextTask();
+                if (!string.IsNullOrEmpty(data))
+                {
+                    Console.WriteLine("Received: " + data);
+                }
+            }
+        }
+
+        protected override void OnStartWork() { }
+        protected override void OnStopWork() { }
+    }
+
+    public class SocketReceiver : BaseWorker<Socket>
+    {
+        private DataProcessor m_processor = null;
+        private List<Socket> m_allConnections = null;
+
+        public SocketReceiver(IRWLock<Socket> rwLock, IRWFactory<Socket> rwFactory)
+            : base(rwLock, rwFactory)
+        {
+            IRWFactory<string> dataRWFactory = rwFactory.CloneTo<string>();
+            IRWLock<string> dataRWLock = dataRWFactory.CreateRWLock(2);
+
+            m_allConnections = new List<Socket>();
+            m_processor = new DataProcessor(dataRWLock, null);
+        }
+
+        private bool SocketConnected(Socket s)
         {
             bool part1 = s.Poll(1000, SelectMode.SelectRead);
             bool part2 = (s.Available == 0);
@@ -60,9 +102,9 @@ namespace server
         {
             while (true)
             {
-                IList<Socket> newConnections = m_clientConnections.ReadAllTasks();
-                if (newConnections != null)
-                    m_allConnections.AddRange(newConnections);
+                Socket newConnection = this.m_rwLock.ReadNextTask();
+                if (newConnection != null)
+                    m_allConnections.Add(newConnection);
 
                 for (int i = 0; i < m_allConnections.Count; )
                 {
@@ -73,7 +115,11 @@ namespace server
                         {
                             byte[] arr = new byte[1024];
                             connection.Receive(arr);
-                            Console.WriteLine("Received: " + System.Text.Encoding.UTF8.GetString(arr).TrimEnd('\0')); 
+                            string data =  System.Text.Encoding.UTF8.GetString(arr).TrimEnd('\0');
+
+                            Utils.DebugInfo(connection, "New connection...");
+
+                            m_processor.WriteTask(data);
                         }
 
                         i++;
@@ -87,33 +133,6 @@ namespace server
             }
         }
 
-        protected override void OnStartWork() { }
-        protected override void OnStopWork() { }
-    }
-
-    public class Worker : BaseWorker
-    {
-        private Processor m_processor = null;
-        private ReadersWritersImpl<Socket> m_clientConnections = null;
-
-        public Worker()
-        {
-            m_clientConnections = new ReadersWritersImpl<Socket>(2);
-            m_processor = new Processor(m_clientConnections);
-        }
-
-        protected override void DoWork()
-        {
-            while (true)
-            {
-                var connection = ThreadPool.Instance.GetTask();
-                if (connection != null)
-                {
-                    m_clientConnections.WriteTask(connection);
-                }
-            }
-        }
-
         protected override void OnStartWork()
         {
             this.m_processor.StartWork();
@@ -122,6 +141,39 @@ namespace server
         protected override void OnStopWork()
         {
             this.m_processor.StopWork();
+        }
+    }
+
+    public class Worker : BaseWorker<Socket>
+    {
+        private SocketReceiver m_receiver = null;
+
+        public Worker(IRWLock<Socket> rwLock, IRWFactory<Socket> rwFactory)
+            : base(rwLock, rwFactory)
+        {
+            m_receiver = new SocketReceiver(rwFactory.CreateRWLock(2), rwFactory);
+        }
+
+        protected override void DoWork()
+        {
+            while (true)
+            {
+                var connection = this.m_rwLock.ReadNextTask();
+                if (connection != null)
+                {
+                    m_receiver.WriteTask(connection);
+                }
+            }
+        }
+
+        protected override void OnStartWork()
+        {
+            this.m_receiver.StartWork();
+        }
+
+        protected override void OnStopWork()
+        {
+            this.m_receiver.StopWork();
         }
     }
 }
