@@ -23,13 +23,9 @@ namespace server.threadpool.workers
 
         protected override void DoWork()
         {
-            while (true)
+            for (Socket connection = this.m_rwLock.ReadNextTask(); connection != null; connection = this.m_rwLock.ReadNextTask())
             {
-                var connection = this.m_rwLock.ReadNextTask();
-                if (connection != null)
-                {
-                    m_receiver.WriteTask(connection);
-                }
+                m_receiver.WriteTask(connection);
             }
         }
 

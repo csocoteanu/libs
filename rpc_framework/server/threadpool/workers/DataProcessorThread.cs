@@ -15,18 +15,14 @@ namespace server.threadpool.workers
 
         protected override void DoWork()
         {
-            while (true)
+            for (SocketData sockData = this.m_rwLock.ReadNextTask(); sockData != null; sockData = this.m_rwLock.ReadNextTask())
             {
-                SocketData sockData = this.m_rwLock.ReadNextTask();
-                if (sockData != null)
-                {
-                    string data = sockData.Data.ToString();
-                    sockData.ClearData();
+                string data = sockData.Data.ToString();
+                sockData.ClearData();
 
-                    Console.WriteLine("Received: " + data);
-                    // echo data back
-                    sockData.SendData(Encoding.ASCII.GetBytes(data));
-                }
+                Console.WriteLine("Received: " + data);
+                // echo data back
+                sockData.SendData(Encoding.ASCII.GetBytes(data));
             }
         }
 

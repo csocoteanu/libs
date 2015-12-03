@@ -30,15 +30,10 @@ namespace server.threadpool.workers
 
         protected override void DoWork()
         {
-            while (true)
+            for (Socket newConnection = this.m_rwLock.ReadNextTask(); newConnection != null; newConnection = this.m_rwLock.ReadNextTask())
             {
-                Socket newConnection = this.m_rwLock.ReadNextTask();
-                if (newConnection != null)
-                {
-                    Utils.LogInfo(newConnection, "New connection!");
-                    SocketData sockData = new SocketData(newConnection);
-                    m_allConnections.Add(sockData);
-                }
+                Utils.LogInfo(newConnection, "New connection!");
+                m_allConnections.Add(new SocketData(newConnection));
 
                 for (int i = 0; i < m_allConnections.Count; )
                 {
@@ -71,6 +66,9 @@ namespace server.threadpool.workers
 
         protected override void OnStopWork()
         {
+            // TODO:
+            // This is available for all of the threads
+            // signal them to stop by adding a null value in the syncronization queue
             this.m_processor.StopWork();
         }
     }
