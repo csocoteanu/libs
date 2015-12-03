@@ -21,8 +21,8 @@ namespace server.threadpool.workers
         public SocketReceiverThread(IRWLock<Socket> rwLock, IRWFactory<Socket> rwFactory)
             : base(rwLock, rwFactory)
         {
-            IRWFactory<string> dataRWFactory = rwFactory.CloneTo<string>();
-            IRWLock<string> dataRWLock = dataRWFactory.CreateRWLock(2);
+            IRWFactory<SocketData> dataRWFactory = rwFactory.CloneTo<SocketData>();
+            IRWLock<SocketData> dataRWLock = dataRWFactory.CreateRWLock(2);
 
             m_allConnections = new List<SocketData>();
             m_processor = new DataProcessorThread(dataRWLock, null);
@@ -35,7 +35,7 @@ namespace server.threadpool.workers
                 Socket newConnection = this.m_rwLock.ReadNextTask();
                 if (newConnection != null)
                 {
-                    Utils.DebugInfo(newConnection, "New connection!");
+                    Utils.LogInfo(newConnection, "New connection!");
                     SocketData sockData = new SocketData(newConnection);
                     m_allConnections.Add(sockData);
                 }
@@ -43,20 +43,22 @@ namespace server.threadpool.workers
                 for (int i = 0; i < m_allConnections.Count; )
                 {
                     SocketData sockData = m_allConnections[i];
-                    if (sockData.IsConnected)
-                    {
-                        if (sockData.ReceiveData())
-                        {
-                            m_processor.WriteTask(sockData.Data.ToString());
-                            sockData.ClearData(); 
-                        }
+                    SocketData.eSocketStatus sockStatus = (sockData.IsConnected) ? sockData.ReceiveData() : SocketData.eSocketStatus.kUnconnected;
 
-                        i++;
-                    }
-                    else
+                    switch (sockStatus)
                     {
-                        m_allConnections.Remove(sockData);
-                        Utils.DebugInfo(sockData.Connection, "Closing connection!");
+                        case SocketData.eSocketStatus.kSuccesfull:
+                            m_processor.WriteTask(sockData);
+                            i++;
+                            break;
+                        case SocketData.eSocketStatus.kNotReady:
+                            i++;
+                            break;
+                        case SocketData.eSocketStatus.kError:
+                        case SocketData.eSocketStatus.kUnconnected:
+                            m_allConnections.Remove(sockData);
+                            Utils.LogInfo(sockData.Connection, "Closing connection...");
+                            break;
                     }
                 }
             }

@@ -10,20 +10,31 @@ namespace server.threadpool.data
 {
     public class SocketData
     {
+        public enum eSocketStatus
+        {
+            kSuccesfull,
+            kNotReady,
+            kUnconnected,
+            kError
+        }
+
         private int m_bytesReceived = 0;
         private byte[] m_buffer = null;
         private Socket m_socket = null;
         private StringBuilder m_data = null;
 
-        public Socket Connection { get { return m_socket; } }
-        public StringBuilder Data { get { return m_data; } }
+        public Socket Connection { get { lock (this) { return m_socket; } } }
+        public StringBuilder Data { get { lock (this) { return m_data; } } }
 
         public bool IsTransferComplete
         {
             get
             {
-                return (this.m_bytesReceived > 0) &&
-                       (this.m_bytesReceived % Settings.Default.kBufferSize) != 0;
+                lock (this)
+                {
+                    return (this.m_bytesReceived > 0) &&
+                           (this.m_bytesReceived % Settings.Default.kBufferSize) != 0; 
+                }
             }
         }
 
@@ -31,7 +42,10 @@ namespace server.threadpool.data
         {
             get
             {
-                return this.IsSocketConnected() && this.m_socket.Connected;
+                lock (this)
+                {
+                    return this.IsSocketConnected() && this.m_socket.Connected; 
+                }
             }
         }
 
@@ -50,30 +64,56 @@ namespace server.threadpool.data
 
         public void ClearData()
         {
-            this.m_data.Clear();
+            lock (this)
+            {
+                this.m_bytesReceived = 0;
+                this.m_data.Clear(); 
+            }
         }
 
-        public bool ReceiveData()
+        public eSocketStatus ReceiveData()
         {
-            if (this.m_socket.Available > 0)
+            lock (this)
             {
-                this.m_bytesReceived += this.m_socket.Receive(this.m_buffer);
-                this.AppendData(this.m_buffer);
+                if (this.m_socket.Available > 0)
+                {
+                    try
+                    {
+                        this.m_bytesReceived += this.m_socket.Receive(this.m_buffer);
+                        this.AppendData(this.m_buffer);
 
-                return this.IsTransferComplete; 
+                        return this.IsTransferComplete ? eSocketStatus.kSuccesfull : eSocketStatus.kNotReady;
+                    }
+                    catch
+                    {
+                        return eSocketStatus.kError;
+                    }
+                }
+
+                return eSocketStatus.kNotReady; 
             }
+        }
 
-            return false;
+        public void SendData(byte[] buffer)
+        {
+            lock (this)
+            {
+                this.m_socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, null, this.m_socket);
+            }
         }
 
         private bool IsSocketConnected()
         {
-            bool part1 = this.m_socket.Poll(1000, SelectMode.SelectRead);
-            bool part2 = (this.m_socket.Available == 0);
-            if (part1 && part2)
-                return false;
-            else
-                return true;
+            lock (this)
+            {
+                bool part1 = (this.m_socket.Poll(1000, SelectMode.SelectRead));
+                bool part2 = (this.m_socket.Available == 0);
+
+                if (part1 && part2)
+                    return false;
+                else
+                    return true; 
+            }
         }
     }
 }

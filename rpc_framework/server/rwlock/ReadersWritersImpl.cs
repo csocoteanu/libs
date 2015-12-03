@@ -49,7 +49,7 @@ namespace server.rwlock
             if (this.m_tasks.Count > 0)
             {
                 task = this.m_tasks.Dequeue();
-                Utils.DebugInfo(task as Socket);
+                Utils.LogInfo(task as Socket);
             }
             // </READ>
 
@@ -76,7 +76,7 @@ namespace server.rwlock
             // <WRITE>
             // writing is performed
             this.m_tasks.Enqueue(task);
-            Utils.DebugInfo(task as Socket);
+            Utils.LogInfo(task as Socket);
             // </WRITE>
 
             // <EXIT>

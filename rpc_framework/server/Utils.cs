@@ -11,19 +11,24 @@ namespace server
 {
     public static class Utils
     {
-        public static void DebugInfo(Socket sock, string auxMessage = null)
-        {
-            IPEndPoint ipRemote = (IPEndPoint)sock.RemoteEndPoint;
-            IPEndPoint ipLocal = (IPEndPoint)sock.LocalEndPoint;
-            int tid = Thread.CurrentThread.ManagedThreadId;
+        public static bool DebugMode = true;
 
-            Console.WriteLine(string.Format("[Thread: {0}] Local: {1}: {2} Remote: {3}: {4} :: {5}",
-                string.Format("({0}:{1})", Thread.CurrentThread.Name, tid), 
-                ipLocal.Address.ToString(), 
-                ipLocal.Port, 
-                ipRemote.Address.ToString(), 
-                ipRemote.Port,
-                string.IsNullOrEmpty(auxMessage) ? string.Empty : auxMessage));
+        public static void LogInfo(Socket sock, string auxMessage = null)
+        {
+            if (DebugMode)
+            {
+                IPEndPoint ipRemote = (IPEndPoint)sock.RemoteEndPoint;
+                IPEndPoint ipLocal = (IPEndPoint)sock.LocalEndPoint;
+                int tid = Thread.CurrentThread.ManagedThreadId;
+
+                Console.WriteLine(string.Format("[Thread: {0}] Local: {1}: {2} Remote: {3}: {4} :: {5}",
+                    string.Format("({0}:{1})", Thread.CurrentThread.Name, tid),
+                    ipLocal.Address.ToString(),
+                    ipLocal.Port,
+                    ipRemote.Address.ToString(),
+                    ipRemote.Port,
+                    string.IsNullOrEmpty(auxMessage) ? string.Empty : auxMessage)); 
+            }
         }
     }
 }
