@@ -33,12 +33,7 @@ namespace server.threadpool
             }
         }
 
-        public Socket GetTask()
-        {
-            return this.m_rwLock.ReadNextTask();
-        }
-
-        public void AddTask(Socket sock)
+        public void AddNewConnection(Socket sock)
         {
             this.m_rwLock.WriteTask(sock);
         }

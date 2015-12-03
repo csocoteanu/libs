@@ -53,6 +53,7 @@
     <Compile Include="threadpool\RWThreadPool.cs" />
     <Compile Include="threadpool\workers\DataProcessorThread.cs" />
     <Compile Include="threadpool\workers\DispatcherThread.cs" />
+    <Compile Include="threadpool\data\SocketData.cs" />
     <Compile Include="threadpool\workers\SocketReceiverThread.cs" />
     <Compile Include="threadpool\ThreadPool.cs" />
     <Compile Include="Utils.cs" />

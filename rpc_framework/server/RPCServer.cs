@@ -65,7 +65,7 @@ namespace server
 
                 Socket newConnection = this.m_connectionSock.Accept();
                 // RWThreadPool.Instance.AddTask(newConnection);
-                BlockingQueueThreadPool.Instance.AddTask(newConnection);
+                BlockingQueueThreadPool.Instance.AddNewConnection(newConnection);
             }
         }
 
