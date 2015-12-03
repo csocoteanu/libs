@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace server
+namespace server.rwlock
 {
     public class BlockingQueue<T> : IRWLock<T>
     {

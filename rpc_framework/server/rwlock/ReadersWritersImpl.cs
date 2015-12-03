@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace server
+namespace server.rwlock
 {
     public class ReadersWritersImpl<T> : IRWLock<T>
     {

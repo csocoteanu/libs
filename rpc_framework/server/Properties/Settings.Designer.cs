@@ -49,5 +49,41 @@ namespace server.Properties {
                 return ((ushort)(this["kMaxConnections"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Dispatcher")]
+        public string kDispatcher {
+            get {
+                return ((string)(this["kDispatcher"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Processor")]
+        public string kProcessor {
+            get {
+                return ((string)(this["kProcessor"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Receiver")]
+        public string kReceiver {
+            get {
+                return ((string)(this["kReceiver"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1024")]
+        public ushort kBufferSize {
+            get {
+                return ((ushort)(this["kBufferSize"]));
+            }
+        }
     }
 }

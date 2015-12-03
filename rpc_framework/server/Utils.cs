@@ -11,9 +11,6 @@ namespace server
 {
     public static class Utils
     {
-        public const string kWorkerName = "Worker";
-        public const string kDispatcherName = "Dispatcher";
-
         public static void DebugInfo(Socket sock, string auxMessage = null)
         {
             IPEndPoint ipRemote = (IPEndPoint)sock.RemoteEndPoint;

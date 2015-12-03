@@ -1,4 +1,5 @@
-﻿using System;
+﻿using server.threadpool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -52,7 +53,6 @@ namespace server
 
         private void RunServer()
         {
-            Thread.CurrentThread.Name = Utils.kDispatcherName;
             Console.WriteLine(string.Format("Starting RPC Server: PID - {0}. Listening on port: {1}", System.Diagnostics.Process.GetCurrentProcess().Id, this.m_port));
 
             while (this.m_isRunning)
