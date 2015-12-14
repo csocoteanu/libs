@@ -89,9 +89,6 @@ namespace Sonic.Net.ConsoleDemo
     #endregion
 
     #region ManagedIOCP/.Net Thread Pool Console Demo
-    /// <summary>
-	/// Summary description for Class1.
-	/// </summary>
 	class ManagedIOCPConsoleDemo
 	{
 		/// <summary>
@@ -151,11 +148,10 @@ namespace Sonic.Net.ConsoleDemo
             Console.WriteLine("Started .Net Thread Pool...");
             ManagedIOCPConsoleDemo._sw.Start();
 			// Not supported in .Net v1.1
-            // System.Threading.ThreadPool.SetMaxThreads(4, 25);
+            System.Threading.ThreadPool.SetMaxThreads(4, 25);
             for(int i = 1; i <= 1000; i++)
                 System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(DotNetThreadPoolHandler.ThreadPoolCallback));
-            Thread th = new Thread(new ThreadStart
-                (DotNetThreadPoolBurstThread));
+            Thread th = new Thread(new ThreadStart(DotNetThreadPoolBurstThread));
             th.Start();
             Console.ReadLine();
         }
