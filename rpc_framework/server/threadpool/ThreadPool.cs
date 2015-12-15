@@ -22,7 +22,7 @@ namespace server.threadpool
 
         protected ThreadPool()
         {
-            this.m_threadCount = Utils.DebugMode ? 1 : Environment.ProcessorCount;
+            this.m_threadCount = Utils.DebugMode ? 0 : Environment.ProcessorCount;
             this.m_rwLock = this.RWFactory.CreateRWLock(this.m_threadCount);
 
             this.m_workers = new DispatcherThread[this.m_threadCount];

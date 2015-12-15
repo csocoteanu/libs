@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using server.io;
 
 namespace server
 {
@@ -18,7 +19,18 @@ namespace server
         private ushort m_maxConnections = 0;
 
         private Socket m_connectionSock = null;
+        private AsyncSocket m_IOConnectionWrapper = null;
         private Thread m_serverThread = null;
+
+        private Action ServerAction
+        {
+            get
+            {
+                if (Utils.DebugMode)
+                    return this.AsyncAccept;
+                return this.SyncAccept;
+            }
+        }
 
         public RPCServer()
         {
@@ -27,6 +39,7 @@ namespace server
             this.m_maxConnections = server.Properties.Settings.Default.kMaxConnections;
 
             this.m_connectionSock = this.InitConnectionSock();
+            this.m_IOConnectionWrapper = new AsyncSocket(this.m_connectionSock);
         }
 
         private Socket InitConnectionSock()
@@ -51,11 +64,11 @@ namespace server
             return sock;
         }
 
-        private void RunServer()
+        private void RunServer(Action serverAction)
         {
             Console.WriteLine(string.Format("Starting RPC Server: PID - {0}. Listening on port: {1}", System.Diagnostics.Process.GetCurrentProcess().Id, this.m_port));
 
-            while (this.m_isRunning)
+            while (this.m_isRunning && serverAction != null)
             {
                 lock (this)
                 {
@@ -63,26 +76,37 @@ namespace server
                         break;
                 }
 
-                Socket newConnection = this.m_connectionSock.Accept();
-                // RWThreadPool.Instance.AddTask(newConnection);
-                BlockingQueueThreadPool.Instance.AddNewConnection(newConnection);
+                serverAction();
             }
+        }
+
+        private void SyncAccept()
+        {
+            Socket newConnection = this.m_connectionSock.Accept();
+            // RWThreadPool.Instance.AddTask(newConnection);
+            BlockingQueueThreadPool.Instance.AddNewConnection(newConnection);
+        }
+
+        private void AsyncAccept()
+        {
+            this.m_IOConnectionWrapper.BeginAccept();
         }
 
         public void Start(bool sendToBackground = true)
         {
             this.m_isRunning = true;
+
             if (sendToBackground)
             {
                 this.m_serverThread = new Thread(new ThreadStart(() =>
                 {
-                    this.RunServer();
+                    this.RunServer(this.ServerAction);
                 }));
                 this.m_serverThread.Start();
             }
             else
             {
-                this.RunServer();
+                this.RunServer(this.ServerAction);
             }
         }
 

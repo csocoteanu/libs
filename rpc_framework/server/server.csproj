@@ -9,7 +9,7 @@
     <RootNamespace>server</RootNamespace>
     <AssemblyName>rpc_server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="io\AsyncSocket.cs" />
     <Compile Include="rwlock\BlockingQueue.cs" />
     <Compile Include="rwlock\IRWLock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
