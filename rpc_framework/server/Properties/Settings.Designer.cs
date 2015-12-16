@@ -85,5 +85,14 @@ namespace server.Properties {
                 return ((ushort)(this["kBufferSize"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("512")]
+        public ushort kBufferCount {
+            get {
+                return ((ushort)(this["kBufferCount"]));
+            }
+        }
     }
 }

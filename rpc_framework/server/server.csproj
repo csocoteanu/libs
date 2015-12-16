@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,7 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferManager.cs" />
+    <Compile Include="memory\BufferManager.cs" />
+    <Compile Include="memory\UnmanagedBufferManager.cs" />
     <Compile Include="io\AsyncSocket.cs" />
     <Compile Include="io\SyncSocket.cs" />
     <Compile Include="threadpool\rwlock\BlockingQueue.cs" />
