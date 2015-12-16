@@ -9,7 +9,7 @@
       <Value Profile="(Default)">65000</Value>
     </Setting>
     <Setting Name="kMaxConnections" Type="System.UInt16" Scope="Application">
-      <Value Profile="(Default)">1000</Value>
+      <Value Profile="(Default)">60000</Value>
     </Setting>
     <Setting Name="kDispatcher" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Dispatcher</Value>

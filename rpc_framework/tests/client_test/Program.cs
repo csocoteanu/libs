@@ -18,12 +18,13 @@ namespace client_test
                 return;
             }
 
-            for (int i = 0; i < 1/*00000*/; i++)
+            string data = args[0];
+            byte[] receiveBuffer = new byte[data.Length + 1];
+
+            for (int i = 0; i < 100000; i++)
             {
                 try
                 {
-                    string data = args[0];
-                    byte[] receiveBuffer = new byte[data.Length + 1];
                     IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
                     IPEndPoint configuredEndPoint = new IPEndPoint(ipAddress, 65000);
                     Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
