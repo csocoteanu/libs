@@ -11,35 +11,49 @@ using server.io;
 
 namespace server
 {
+    public enum eServerMode
+    {
+        kAsyncSocket,
+        kRWThreadPool,
+        kBlockingQueueThreadPool
+    }
+
     public class RPCServer
     {
+        #region Members
         private bool m_isRunning = false;
         private string m_endPoint = null;
         private ushort m_port = 0;
         private ushort m_maxConnections = 0;
 
         private Socket m_connectionSock = null;
-        private AsyncSocket m_IOConnectionWrapper = null;
-        private Thread m_serverThread = null;
+        private eServerMode m_serverMode;
 
-        private Action ServerAction
+        private Thread m_serverThread = null; 
+        #endregion
+
+        #region Properties
+        private AsyncSocket m_IOConnectionWrapper = null;
+        private AsyncSocket IOConnectionWrapper
         {
             get
             {
-                if (Utils.DebugMode)
-                    return this.AsyncAccept;
-                return this.SyncAccept;
+                if (m_IOConnectionWrapper == null && m_connectionSock != null)
+                    m_IOConnectionWrapper = new AsyncSocket(m_connectionSock);
+                return m_IOConnectionWrapper;
             }
         }
+        #endregion
 
-        public RPCServer()
+        public RPCServer(eServerMode serverMode)
         {
             this.m_endPoint = server.Properties.Settings.Default.kEndPoint;
             this.m_port = server.Properties.Settings.Default.kPort;
             this.m_maxConnections = server.Properties.Settings.Default.kMaxConnections;
 
             this.m_connectionSock = this.InitConnectionSock();
-            this.m_IOConnectionWrapper = new AsyncSocket(this.m_connectionSock);
+
+            this.m_serverMode = serverMode;
         }
 
         private Socket InitConnectionSock()
@@ -64,11 +78,11 @@ namespace server
             return sock;
         }
 
-        private void RunServer(Action serverAction)
+        private void RunServer()
         {
             Console.WriteLine(string.Format("Starting RPC Server: PID - {0}. Listening on port: {1}", System.Diagnostics.Process.GetCurrentProcess().Id, this.m_port));
 
-            while (this.m_isRunning && serverAction != null)
+            while (this.m_isRunning)
             {
                 lock (this)
                 {
@@ -76,20 +90,19 @@ namespace server
                         break;
                 }
 
-                serverAction();
+                switch (this.m_serverMode)
+                {
+                    case eServerMode.kAsyncSocket:
+                        this.IOConnectionWrapper.BeginAccept();
+                        break;
+                    case eServerMode.kRWThreadPool:
+                        RWThreadPool.Instance.AddNewConnection(this.m_connectionSock.Accept());
+                        break;
+                    case eServerMode.kBlockingQueueThreadPool:
+                        BlockingQueueThreadPool.Instance.AddNewConnection(this.m_connectionSock.Accept());
+                        break;
+                }
             }
-        }
-
-        private void SyncAccept()
-        {
-            Socket newConnection = this.m_connectionSock.Accept();
-            // RWThreadPool.Instance.AddTask(newConnection);
-            BlockingQueueThreadPool.Instance.AddNewConnection(newConnection);
-        }
-
-        private void AsyncAccept()
-        {
-            this.m_IOConnectionWrapper.BeginAccept();
         }
 
         public void Start(bool sendToBackground = true)
@@ -100,13 +113,13 @@ namespace server
             {
                 this.m_serverThread = new Thread(new ThreadStart(() =>
                 {
-                    this.RunServer(this.ServerAction);
+                    this.RunServer();
                 }));
                 this.m_serverThread.Start();
             }
             else
             {
-                this.RunServer(this.ServerAction);
+                this.RunServer();
             }
         }
 

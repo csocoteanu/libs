@@ -18,7 +18,7 @@ namespace client_test
                 return;
             }
 
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1/*00000*/; i++)
             {
                 try
                 {
@@ -38,7 +38,7 @@ namespace client_test
                     Console.WriteLine("Succesfully received string from remote endpoint: " + Encoding.UTF8.GetString(receiveBuffer));
 
                     sock.Close();
-                    Console.WriteLine("Succesfully closed connection to remote endpoint!............" + i);
+                    Console.WriteLine("Succesfully closed connection to remote endpoint!............#" + i);
                 }
                 catch (Exception ex)
                 {

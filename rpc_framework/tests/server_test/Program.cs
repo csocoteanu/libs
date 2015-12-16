@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using server;
 
 namespace server_test
 {
@@ -10,7 +11,8 @@ namespace server_test
     {
         static void Main(string[] args)
         {
-            server.RPCServer server = new server.RPCServer();
+            eServerMode serverMode = eServerMode.kAsyncSocket;
+            RPCServer server = new RPCServer(serverMode);
             server.Start(false);
         }
     }

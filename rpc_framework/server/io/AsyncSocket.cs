@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Threading;
-using server.threadpool.data;
 using server.Properties;
 using System.Timers;
+using server.io.data;
 
 namespace server.io
 {
@@ -77,49 +77,12 @@ namespace server.io
         }
     }
 
-    public class AsyncSocket : IDisposable
+    public class AsyncSocket : SocketData, IDisposable
     {
-        #region Members
-        private byte[] m_buffer = null;
-        private StringBuilder m_data = null;
-        private Socket m_connection = null;
-
         private ManualResetEvent m_acceptEvent = null;
-        #endregion
 
-        #region Properties
-        public Socket Connection { get { return m_connection; } }
-        public StringBuilder Data { get { return m_data; } }
-
-        public bool IsConnected
+        public AsyncSocket(Socket connection) : base(connection)
         {
-            get
-            {
-                return this.IsSocketConnected && this.m_connection.Connected;
-            }
-        }
-
-        private bool IsSocketConnected
-        {
-            get
-            {
-                bool part1 = (this.m_connection.Poll(1000, SelectMode.SelectRead));
-                bool part2 = (this.m_connection.Available == 0);
-
-                if (part1 && part2)
-                    return false;
-                else
-                    return true;
-            }
-        }
-        #endregion
-
-        public AsyncSocket(Socket connection)
-        {
-            this.m_connection = connection;
-            this.m_buffer = new byte[Settings.Default.kBufferSize];
-            this.m_data = new StringBuilder();
-
             this.m_acceptEvent = new ManualResetEvent(false);
         }
 
@@ -127,7 +90,7 @@ namespace server.io
         {
             this.m_acceptEvent.Reset();
 
-            this.m_connection.BeginAccept(AcceptCallback, this);
+            this.m_socket.BeginAccept(AcceptCallback, this);
 
             this.m_acceptEvent.WaitOne();
 
@@ -135,7 +98,7 @@ namespace server.io
         public static void AcceptCallback(IAsyncResult ar)
         {
             AsyncSocket listener = (AsyncSocket)ar.AsyncState;
-            Socket handler = listener.m_connection.EndAccept(ar);
+            Socket handler = listener.m_socket.EndAccept(ar);
             AsyncSocket remoteEP = new AsyncSocket(handler);
 
             Utils.LogInfo(handler, "Incomming Connection");
@@ -149,7 +112,7 @@ namespace server.io
 
         public void BeginReceive()
         {
-            this.m_connection.BeginReceive(this.m_buffer, 0, Settings.Default.kBufferSize, 0, ReceiveCallback, this);
+            this.m_socket.BeginReceive(this.m_buffer, 0, Settings.Default.kBufferSize, 0, ReceiveCallback, this);
         }
         public static void ReceiveCallback(IAsyncResult ar)
         {
@@ -162,8 +125,8 @@ namespace server.io
                 return;
             }
 
-            readBytes = remoteEP.m_connection.EndReceive(ar);
-            remoteEP.m_data.Append(Encoding.ASCII.GetString(remoteEP.m_buffer, 0, readBytes));
+            readBytes = remoteEP.Connection.EndReceive(ar);
+            remoteEP.AppendData(remoteEP.m_buffer);
 
             if (readBytes == Settings.Default.kBufferSize)
             {
@@ -181,7 +144,7 @@ namespace server.io
             }
         }
 
-        public void SendData(byte[] buffer)
+        public override void SendData(byte[] buffer)
         {
             if (!this.IsConnected)
             {
@@ -189,7 +152,7 @@ namespace server.io
                 return;
             }
 
-            this.m_connection.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, null, this.m_connection);
+            base.SendData(buffer);
         }
 
         #region IDisposable
@@ -197,7 +160,7 @@ namespace server.io
         {
             try
             {
-                m_connection.Close();
+                this.m_socket.Close();
             }
             catch
             {
