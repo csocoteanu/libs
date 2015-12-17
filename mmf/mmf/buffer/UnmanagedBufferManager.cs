@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using mmf.context;
 
-namespace server.memory
+namespace mmf.buffer
 {
     public unsafe class UnmanagedBufferManager : IDisposable
     {
@@ -22,8 +23,8 @@ namespace server.memory
 
         private void Init()
         {
-            m_pageSize = Settings.Default.kBufferSize;
-            m_pageCount = Settings.Default.kBufferCount;
+            m_pageSize = MMFContext.Instance.BufferSize;
+            m_pageCount = MMFContext.Instance.BufferCount;
             m_PTRbaseMem = (byte *)Marshal.AllocHGlobal(m_pageCount * m_pageSize).ToPointer();
 
             m_newIndex = 0;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using server.Properties;
+using mmf.context;
 
-namespace server.memory.pool
+namespace mmf.pool
 {
     public class ObjectPool<T> : IDisposable
         where T : class, IPoolableObject, new()
@@ -29,7 +29,7 @@ namespace server.memory.pool
 
         private void Init()
         {
-            m_maxPoolSize = Settings.Default.kObjectPoolSize;
+            m_maxPoolSize = MMFContext.Instance.ObjectPoolCount;
             m_allReferences = new Dictionary<int, Reference<T>>();
         }
 

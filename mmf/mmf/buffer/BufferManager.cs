@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using mmf.context;
 
-namespace server.memory
+namespace mmf.buffer
 {
     public class BufferManager
     {
@@ -17,8 +18,8 @@ namespace server.memory
 
         private void Init()
         {
-            m_pageSize = Settings.Default.kBufferSize;
-            m_pageCount = Settings.Default.kBufferCount;
+            m_pageSize = MMFContext.Instance.BufferSize;
+            m_pageCount = MMFContext.Instance.BufferCount;
         }
 
 

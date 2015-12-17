@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="buffer\BufferManager.cs" />
     <Compile Include="buffer\UnmanagedBufferManager.cs" />
+    <Compile Include="MMFContext.cs" />
     <Compile Include="object_pool\IPoolableObject.cs" />
     <Compile Include="object_pool\ObjectPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
