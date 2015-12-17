@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmf", "mmf\mmf.csproj", "{B9620F99-12FB-4CA2-8932-A2E6851AF424}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmf_tests", "mmf_tests\mmf_tests.csproj", "{DC1F51F3-117B-49C7-BCD1-FB73149C7129}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B9620F99-12FB-4CA2-8932-A2E6851AF424} = {B9620F99-12FB-4CA2-8932-A2E6851AF424}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FCC7AF8A-1229-4E4C-AE95-9F9FAA8CDB89}"
 	ProjectSection(SolutionItems) = preProject

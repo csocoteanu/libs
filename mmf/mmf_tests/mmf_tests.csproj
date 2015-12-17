@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,8 +46,15 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicMemoryTest.cs" />
+    <Compile Include="BasicObjectPoolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="types\Student.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mmf\mmf.csproj">
+      <Project>{B9620F99-12FB-4CA2-8932-A2E6851AF424}</Project>
+      <Name>mmf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -37,6 +37,11 @@ namespace mmf.pool
         {
             lock (this)
             {
+                if (MMFContext.Instance.UseDefaultAllocation)
+                {
+                    return new T();
+                }
+
                 bool foundFreeItem = false;
                 T newItem = null;
                 Reference<T> newItemRef = default(Reference<T>);
@@ -76,10 +81,16 @@ namespace mmf.pool
         {
             lock (this)
             {
+                if (MMFContext.Instance.UseDefaultAllocation)
+                {
+                    return;
+                }
+
                 int itemHash = item.GetHashCode();
                 var itemReference = m_allReferences[itemHash];
 
-                itemReference.IsMapped = false; 
+                itemReference.IsMapped = false;
+                m_allReferences[itemHash] = itemReference;
             }
         }
 

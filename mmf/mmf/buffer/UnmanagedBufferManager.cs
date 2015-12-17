@@ -10,6 +10,8 @@ namespace mmf.buffer
     public unsafe class UnmanagedBufferManager : IDisposable
     {
         #region Members
+        private bool m_initOnce = false;
+
         private ushort m_pageSize = 0;
         private ushort m_pageCount = 0;
         private byte* m_PTRbaseMem = null;
@@ -17,22 +19,29 @@ namespace mmf.buffer
         private ushort m_newIndex = 0;
         private Dictionary<ushort, bool> m_mappedPages = null;
 
-        private UnmanagedBufferManager() { Init(); }
+        private UnmanagedBufferManager() { }
         public static readonly UnmanagedBufferManager ms_Instance = new UnmanagedBufferManager(); 
         #endregion
 
-        private void Init()
+        private void InitOnce()
         {
-            m_pageSize = MMFContext.Instance.BufferSize;
-            m_pageCount = MMFContext.Instance.BufferCount;
-            m_PTRbaseMem = (byte *)Marshal.AllocHGlobal(m_pageCount * m_pageSize).ToPointer();
+            if (!m_initOnce)
+            {
+                m_pageSize = MMFContext.Instance.BufferSize;
+                m_pageCount = MMFContext.Instance.BufferCount;
+                m_PTRbaseMem = (byte*)Marshal.AllocHGlobal(m_pageCount * m_pageSize).ToPointer();
 
-            m_newIndex = 0;
-            m_mappedPages = new Dictionary<ushort, bool>();
+                m_newIndex = 0;
+                m_mappedPages = new Dictionary<ushort, bool>();
+
+                m_initOnce = true;
+            }
         }
 
         public byte* AllocSpace()
         {
+            this.InitOnce();
+
             byte* allocAddr = null;
             ushort newPageIndex = m_newIndex;
             bool hasUnallocatedPage = false;
