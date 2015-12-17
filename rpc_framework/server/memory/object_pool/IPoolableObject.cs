@@ -5,7 +5,7 @@ using System.Text;
 
 namespace server.memory.pool
 {
-    public interface IPoolableObject
+    public interface IPoolableObject : IDisposable
     {
         void Init();
         void Reset();

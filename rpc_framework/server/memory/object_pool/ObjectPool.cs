@@ -6,7 +6,8 @@ using server.Properties;
 
 namespace server.memory.pool
 {
-    public class ObjectPool<T> where T : class, IPoolableObject, new()
+    public class ObjectPool<T> : IDisposable
+        where T : class, IPoolableObject, new()
     {
         protected struct Reference<U>
         {
@@ -81,5 +82,21 @@ namespace server.memory.pool
                 itemReference.IsMapped = false; 
             }
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            var iterator = m_allReferences.GetEnumerator();
+            while (iterator.MoveNext())
+            {
+                var currentItem = iterator.Current;
+                var refItem = currentItem.Value;
+
+                refItem.Root.Dispose();
+            }
+        }
+
+        #endregion
     }
 }
