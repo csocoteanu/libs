@@ -40,8 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="memory\BufferManager.cs" />
-    <Compile Include="memory\UnmanagedBufferManager.cs" />
+    <Compile Include="memory\buffer\BufferManager.cs" />
+    <Compile Include="memory\object_pool\IPoolableObject.cs" />
+    <Compile Include="memory\object_pool\ObjectPool.cs" />
+    <Compile Include="memory\buffer\UnmanagedBufferManager.cs" />
     <Compile Include="io\AsyncSocket.cs" />
     <Compile Include="io\SyncSocket.cs" />
     <Compile Include="threadpool\rwlock\BlockingQueue.cs" />
