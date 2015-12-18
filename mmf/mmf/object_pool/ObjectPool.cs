@@ -22,6 +22,7 @@ namespace mmf.pool
         }
 
         protected ushort m_maxPoolSize = 0;
+        protected bool m_useDefaultAllocation = false;
         protected Dictionary<int, Reference<T>> m_allReferences = null;
 
         protected ObjectPool() { Init(); }
@@ -29,22 +30,21 @@ namespace mmf.pool
 
         private void Init()
         {
+            m_useDefaultAllocation = MMFContext.Instance.UseDefaultAllocation;
             m_maxPoolSize = MMFContext.Instance.ObjectPoolCount;
             m_allReferences = new Dictionary<int, Reference<T>>();
         }
 
         public T New()
         {
+            bool foundFreeItem = false;
+            T newItem = null;
+            Reference<T>? newItemRef = null;
+
             lock (this)
             {
-                if (MMFContext.Instance.UseDefaultAllocation)
-                {
+                if (m_useDefaultAllocation)
                     return new T();
-                }
-
-                bool foundFreeItem = false;
-                T newItem = null;
-                Reference<T> newItemRef = default(Reference<T>);
 
                 foreach (var refEntry in m_allReferences)
                 {
@@ -67,11 +67,11 @@ namespace mmf.pool
 
                     newItem = new T();
                     newItem.Init();
-
                     newItemRef = new Reference<T>(newItem, true);
                 }
 
-                m_allReferences[newItem.GetHashCode()] = newItemRef;
+                if (newItemRef.HasValue)
+                    m_allReferences[newItem.GetHashCode()] = newItemRef.Value;
 
                 return newItem;
             }
@@ -81,10 +81,8 @@ namespace mmf.pool
         {
             lock (this)
             {
-                if (MMFContext.Instance.UseDefaultAllocation)
-                {
+                if (m_useDefaultAllocation)
                     return;
-                }
 
                 int itemHash = item.GetHashCode();
                 var itemReference = m_allReferences[itemHash];
@@ -103,8 +101,10 @@ namespace mmf.pool
             {
                 var currentItem = iterator.Current;
                 var refItem = currentItem.Value;
+                var refItemHash = refItem.GetHashCode();
 
                 refItem.Root.Dispose();
+                m_allReferences.Remove(refItemHash);
             }
         }
 

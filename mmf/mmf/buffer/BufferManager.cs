@@ -21,7 +21,5 @@ namespace mmf.buffer
             m_pageSize = MMFContext.Instance.BufferSize;
             m_pageCount = MMFContext.Instance.BufferCount;
         }
-
-
     }
 }

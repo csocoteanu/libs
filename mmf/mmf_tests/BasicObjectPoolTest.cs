@@ -37,7 +37,7 @@ namespace mmf.tests
         [TestMethod]
         public void TestSingleObject_MultipleAllocation()
         {
-            mmf.context.MMFContext.Instance.UseDefaultAllocation = true;
+            // mmf.context.MMFContext.Instance.UseDefaultAllocation = true;
             var studentPool = ObjectPool<Student>.Instance;
 
             for (int i = 0; i < int.MaxValue; i++)
