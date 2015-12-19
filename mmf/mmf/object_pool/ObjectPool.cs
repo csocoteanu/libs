@@ -27,7 +27,7 @@ namespace mmf.pool
         /// and a bool flag indicating whether the object has been "freed" or not.
         /// </summary>
         /// <typeparam name="U"></typeparam>
-        protected struct Reference<U>
+        protected class Reference<U>
         {
             public U Root;
             public bool IsMapped;
@@ -42,16 +42,16 @@ namespace mmf.pool
         #region Members
         protected ushort m_maxPoolSize = 0;
         protected bool m_useDefaultAllocation = false;
+        protected MMFContext m_context = null;
         protected Dictionary<int, Reference<T>> m_allReferences = null; 
         #endregion
 
-        protected ObjectPool() { Init(); }
-        public static readonly ObjectPool<T> Instance = new ObjectPool<T>();
-
-        private void Init()
+        public ObjectPool(MMFContext context) { Init(context); }
+        private void Init(MMFContext context)
         {
-            m_useDefaultAllocation = MMFContext.Instance.UseDefaultAllocation;
-            m_maxPoolSize = MMFContext.Instance.ObjectPoolCount;
+            m_context = context;
+            m_useDefaultAllocation = m_context.UseDefaultAllocation;
+            m_maxPoolSize = m_context.ObjectPoolCount;
             m_allReferences = new Dictionary<int, Reference<T>>();
         }
 
@@ -63,7 +63,7 @@ namespace mmf.pool
         {
             bool foundFreeItem = false;
             T newItem = null;
-            Reference<T>? newItemRef = null;
+            Reference<T> newItemRef = null;
 
             // if we don`t use this mechanism, simply create a new instance
             if (m_useDefaultAllocation)
@@ -106,8 +106,8 @@ namespace mmf.pool
                 }
 
                 // store or update the newly created reference
-                if (newItemRef.HasValue)
-                    m_allReferences[newItem.GetHashCode()] = newItemRef.Value;
+                if (newItem != null && newItemRef != null)
+                    m_allReferences[newItem.GetHashCode()] = newItemRef;
 
                 return newItem;
             }
