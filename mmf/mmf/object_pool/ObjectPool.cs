@@ -87,6 +87,8 @@ namespace mmf.pool
                         newItem = reference.Root;
 
                         newItem.Reset();
+                        // also mark the refence container as being mapped to an instance
+                        reference.IsMapped = true;
                         break;
                     }
                 }
@@ -133,7 +135,6 @@ namespace mmf.pool
                 // update the flag that indicates the object is free
                 // set the mapping based on the hash of the object
                 itemReference.IsMapped = false;
-                m_allReferences[itemHash] = itemReference;
             }
         }
 

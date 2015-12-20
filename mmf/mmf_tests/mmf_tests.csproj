@@ -46,7 +46,8 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicObjectPoolTest.cs" />
+    <Compile Include="ObjectPoolTest.cs" />
+    <Compile Include="BufferManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="types\Student.cs" />
   </ItemGroup>

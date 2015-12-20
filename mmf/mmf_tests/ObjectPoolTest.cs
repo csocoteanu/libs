@@ -11,30 +11,72 @@ using System.Runtime;
 namespace mmf.tests
 {
     [TestClass]
-    public class BasicObjectPoolTest
+    public class ObjectPoolTest
     {
         [TestMethod]
-        public void TestSingleObject_SingleAllocation()
+        public void SingleObject_ReferenceCheck()
         {
             using (var studentPool = new ObjectPool<Student>(mmf.context.MMFContext.Instance))
             {
-                Debug.WriteLine("Total memory before allocations: " + GC.GetTotalMemory(false));
-
+                // create first object and release the memory
                 Student gigel = studentPool.New();
                 gigel.Name = "Gigi";
                 gigel.Age = 18;
                 gigel.Grade = 10;
-                Debug.WriteLine(gigel);
-                Debug.WriteLine("Total memory after first allocation: " + GC.GetTotalMemory(false));
                 studentPool.Free(gigel);
+
+                // create the second object
+                Student ionel = studentPool.New();
+                ionel.Name = "Ionel";
+                ionel.Age = 18;
+                ionel.Grade = 5;
+                studentPool.Free(ionel);
+
+                // The references should point to the same location
+                Assert.IsTrue(gigel == ionel, "Object references should point to the same location!");
+
+                // create first object without releasing the memory
+                gigel = studentPool.New();
+                gigel.Name = "Gigi";
+                gigel.Age = 18;
+                gigel.Grade = 10;
+
+                // create the second object
+                ionel = studentPool.New();
+                ionel.Name = "Ionel";
+                ionel.Age = 18;
+                ionel.Grade = 5;
+
+                // The references should point at different locations
+                Assert.IsTrue(gigel != ionel, "Object references should point at different locations!");
+            }
+        }
+
+        [TestMethod]
+        public void TestSingleObject_SingleAllocation()
+        {
+            long totalMemory = 0;
+            Debug.WriteLine("Total memory before allocations: " + GC.GetTotalMemory(true));
+            using (var studentPool = new ObjectPool<Student>(mmf.context.MMFContext.Instance))
+            {
+                Student gigel = studentPool.New();
+                gigel.Name = "Gigi";
+                gigel.Age = 18;
+                gigel.Grade = 10;
+                studentPool.Free(gigel);
+                totalMemory = GC.GetTotalMemory(false);
+                Debug.WriteLine("Total memory after first allocation: " + totalMemory);
 
                 Student ionel = studentPool.New();
                 ionel.Name = "Ionel";
                 ionel.Age = 18;
                 ionel.Grade = 5;
-                Debug.WriteLine(ionel);
-                Debug.WriteLine("Total memory after second allocation: " + GC.GetTotalMemory(false));
+                var memoryAfterSecondAllocation = GC.GetTotalMemory(false);
+                Debug.WriteLine("Total memory after second allocation: " + memoryAfterSecondAllocation);
+
+                Assert.IsTrue(totalMemory == memoryAfterSecondAllocation, "There should be no memory increase!");
             }
+            Debug.WriteLine("Total memory after all allocations: " + GC.GetTotalMemory(true));
         }
 
         [TestMethod]
