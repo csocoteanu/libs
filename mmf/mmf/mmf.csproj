@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="buffer\BufferManager.cs" />
+    <Compile Include="buffer\IndexGenerator.cs" />
     <Compile Include="buffer\UnmanagedBufferManager.cs" />
     <Compile Include="MMFContext.cs" />
     <Compile Include="object_pool\IPoolableObject.cs" />
