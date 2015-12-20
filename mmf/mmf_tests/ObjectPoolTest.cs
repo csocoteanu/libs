@@ -55,7 +55,6 @@ namespace mmf.tests
         [TestMethod]
         public void TestSingleObject_SingleAllocation()
         {
-            long totalMemory = 0;
             Debug.WriteLine("Total memory before allocations: " + GC.GetTotalMemory(true));
             using (var studentPool = new ObjectPool<Student>(mmf.context.MMFContext.Instance))
             {
@@ -64,8 +63,8 @@ namespace mmf.tests
                 gigel.Age = 18;
                 gigel.Grade = 10;
                 studentPool.Free(gigel);
-                totalMemory = GC.GetTotalMemory(false);
-                Debug.WriteLine("Total memory after first allocation: " + totalMemory);
+                var memoryAfterFirstAllocation = GC.GetTotalMemory(false);
+                Debug.WriteLine("Total memory after first allocation: " + memoryAfterFirstAllocation);
 
                 Student ionel = studentPool.New();
                 ionel.Name = "Ionel";
@@ -74,7 +73,7 @@ namespace mmf.tests
                 var memoryAfterSecondAllocation = GC.GetTotalMemory(false);
                 Debug.WriteLine("Total memory after second allocation: " + memoryAfterSecondAllocation);
 
-                Assert.IsTrue(totalMemory == memoryAfterSecondAllocation, "There should be no memory increase!");
+                Assert.IsTrue(memoryAfterSecondAllocation == memoryAfterFirstAllocation, "There should be no memory increase!");
             }
             Debug.WriteLine("Total memory after all allocations: " + GC.GetTotalMemory(true));
         }
