@@ -23,14 +23,7 @@ namespace GenericSerializer.Serializer
 
         private void InitXmlWriter()
         {
-            this.m_settings = new XmlWriterSettings
-            {
-                Indent = true,
-                IndentChars = "  ",
-                NewLineChars = "\r\n",
-                NewLineHandling = NewLineHandling.Replace
-            };
-
+            this.m_settings = Constants.kWriterSettings;
             this.m_xmlWriter = XmlWriter.Create(this.m_outputPath, this.m_settings);
         }
 

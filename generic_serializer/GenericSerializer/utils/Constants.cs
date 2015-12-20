@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using GenericSerializer.XmlUtils.Extensions;
 
 namespace GenericSerializer.XmlUtils
 {
@@ -15,5 +17,7 @@ namespace GenericSerializer.XmlUtils
         internal const string kClassString = "class";
         internal const string kStructString = "struct";
         internal const string kAssembly = "assembly";
+
+        internal static readonly XmlWriterSettings kWriterSettings = Xml.CreateWriterSettings();
     }
 }

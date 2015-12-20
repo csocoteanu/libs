@@ -56,5 +56,16 @@ namespace GenericSerializer.XmlUtils.Extensions
 
             return nodeText;
         }
+
+        internal static XmlWriterSettings CreateWriterSettings()
+        {
+            return new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "  ",
+                NewLineChars = "\r\n",
+                NewLineHandling = NewLineHandling.Replace
+            };
+        }
     }
 }
