@@ -6,20 +6,26 @@ using mmf.context;
 
 namespace mmf.buffer
 {
-    public class BufferManager
+    public class BufferManager : IDisposable
     {
         #region Members
         private ushort m_pageSize = 0;
         private ushort m_pageCount = 0;
+        private MMFContext m_context = null;
         #endregion
 
-        private BufferManager() { Init(); }
-        public static readonly BufferManager ms_Instance = new BufferManager();
-
-        private void Init()
+        public BufferManager(MMFContext context) { Init(context); }
+        private void Init(MMFContext context)
         {
-            m_pageSize = MMFContext.Instance.BufferSize;
-            m_pageCount = MMFContext.Instance.BufferCount;
+            m_context = context;
+            m_pageSize = context.BufferSize;
+            m_pageCount = context.BufferCount;
         }
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+        }
+        #endregion
     }
 }

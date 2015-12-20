@@ -143,18 +143,15 @@ namespace mmf.pool
         /// </summary>
         public void Dispose()
         {
-            var iterator = m_allReferences.GetEnumerator();
-            while (iterator.MoveNext())
+            // iterate through the entire object list
+            // and cleanup all of the stored references.
+            foreach (var refItem in m_allReferences.Values)
             {
-                // iterate through the entire object list
-                // and cleanup all of the stored references.
-                var currentItem = iterator.Current;
-                var refItem = currentItem.Value;
-                var refItemHash = refItem.GetHashCode();
-
                 refItem.Root.Dispose();
-                m_allReferences.Remove(refItemHash);
+                refItem.Root = null;
             }
+
+            m_allReferences.Clear();
         }
         #endregion
     }
