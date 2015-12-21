@@ -39,8 +39,8 @@ namespace mmf.buffer
 
         public void Release(byte * memory)
         {
-            ushort pageIndex = (ushort)(memory - m_PTRbaseMem);
-            m_generator.ReleaseIndex(pageIndex);
+            long pageIndex = memory - m_PTRbaseMem;
+            m_generator.ReleaseIndex((int)(pageIndex / m_pageSize));
         }
 
         public void Dispose()

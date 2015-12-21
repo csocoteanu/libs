@@ -5,6 +5,13 @@ using System.Text;
 
 namespace mmf.buffer
 {
+    /// <summary>
+    /// Free index generator class.
+    /// This class generates an index available for use for the next buffer allocations.
+    /// It keeps track of the allocated and freed indexes, so that when requesting a new
+    /// buffer allocation, it takes into account any released index and allocates a new 
+    /// index if there isn`t any one available.
+    /// </summary>
     internal class IndexGenerator : IDisposable
     {
         private int m_nextIndex = 0;
@@ -18,6 +25,10 @@ namespace mmf.buffer
             m_availableIndexes = new Queue<int>();
         }
 
+        /// <summary>
+        /// Gets the next available index for the call.
+        /// </summary>
+        /// <returns></returns>
         public int? GetNextFreeIndex()
         {
             if (m_availableIndexes.Count > 0)
@@ -32,6 +43,10 @@ namespace mmf.buffer
             }
         }
 
+        /// <summary>
+        /// Release an index and make it available for the next call.
+        /// </summary>
+        /// <param name="index"></param>
         public void ReleaseIndex(int index)
         {
             m_availableIndexes.Enqueue(index);
