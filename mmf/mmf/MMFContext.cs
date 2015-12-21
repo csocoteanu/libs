@@ -9,9 +9,9 @@ namespace mmf.context
     public class MMFContext
     {
         #region Properties
-        public ushort BufferSize { get; private set; }
-        public ushort BufferCount { get; private set; }
-        public ushort ObjectPoolCount { get; private set; }
+        public ushort BufferSize { get; set; }
+        public ushort BufferCount { get; set; }
+        public ushort ObjectPoolCount { get; set; }
 
         public bool UseDefaultAllocation { get; set; }
         #endregion
