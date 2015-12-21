@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using mmf.context;
+using mmf.exceptions;
 
 namespace mmf.buffer
 {
@@ -54,6 +55,10 @@ namespace mmf.buffer
                 int offset = freeIndex.Value * m_pageSize;
                 newBuffer = new ArraySegment<byte>(this.m_bufferSpace, offset, m_pageSize);
             }
+            else
+            {
+                throw new BufferManagerOutOfSpace("Reached maximum number of allocations: " + this.m_pageCount);
+            }
 
             return newBuffer;
         }
@@ -67,8 +72,8 @@ namespace mmf.buffer
         {
             if (buffer.HasValue)
             {
-                int bufferIndex = buffer.Value.Offset / m_pageSize;
-                m_generator.ReleaseIndex(bufferIndex);
+                int? bufferIndex = buffer.Value.Offset / m_pageSize;
+                m_generator.ReleaseIndex(ref bufferIndex);
 
                 buffer = null;
             }

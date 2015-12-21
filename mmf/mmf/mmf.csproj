@@ -44,7 +44,10 @@
     <Compile Include="buffer\BufferManager.cs" />
     <Compile Include="buffer\IndexGenerator.cs" />
     <Compile Include="buffer\UnmanagedBufferManager.cs" />
-    <Compile Include="MMFContext.cs" />
+    <Compile Include="common\ItemGenerator.cs" />
+    <Compile Include="exceptions\BufferManagerOutOfSpace.cs" />
+    <Compile Include="exceptions\ObjectPoolOutOfSpace.cs" />
+    <Compile Include="common\MMFContext.cs" />
     <Compile Include="object_pool\IPoolableObject.cs" />
     <Compile Include="object_pool\ObjectPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,9 +57,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

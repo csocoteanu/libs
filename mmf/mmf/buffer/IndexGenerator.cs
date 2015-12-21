@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using mmf.common;
 
 namespace mmf.buffer
 {
@@ -12,18 +13,9 @@ namespace mmf.buffer
     /// buffer allocation, it takes into account any released index and allocates a new 
     /// index if there isn`t any one available.
     /// </summary>
-    internal class IndexGenerator : IDisposable
+    internal class IndexGenerator : ItemGenerator<int?>
     {
-        private int m_nextIndex = 0;
-        private int m_maxIndexValue = 0;
-        private Queue<int> m_availableIndexes = null;
-
-        public IndexGenerator(int maxIndexValue)
-        {
-            m_nextIndex = 0;
-            m_maxIndexValue = maxIndexValue;
-            m_availableIndexes = new Queue<int>();
-        }
+        public IndexGenerator(int maxIndexValue) : base(maxIndexValue) { }
 
         /// <summary>
         /// Gets the next available index for the call.
@@ -31,33 +23,21 @@ namespace mmf.buffer
         /// <returns></returns>
         public int? GetNextFreeIndex()
         {
-            if (m_availableIndexes.Count > 0)
-            {
-                return m_availableIndexes.Dequeue();
-            }
-            else
-            {
-                if (m_nextIndex == m_maxIndexValue)
-                    return null;
-                return m_nextIndex++;
-            }
+            return this.GenerateNextItem();
         }
 
         /// <summary>
         /// Release an index and make it available for the next call.
         /// </summary>
         /// <param name="index"></param>
-        public void ReleaseIndex(int index)
+        public void ReleaseIndex(ref int? index)
         {
-            m_availableIndexes.Enqueue(index);
+            this.FreeItem(ref index);
         }
 
-        #region IDisposable Members
-        public void Dispose()
+        protected override int? CreateItemCB()
         {
-            m_availableIndexes.Clear();
-            m_nextIndex = 0;
+            return AllItemsCount;
         }
-        #endregion
     }
 }
