@@ -13,7 +13,7 @@ namespace mmf_tests
         [TestMethod]
         public void BasicAllocations()
         {
-            var context = mmf.context.MMFContext.Instance;
+            var context = new mmf.context.MMFContext();
             context.BufferCount = 2;
             context.BufferSize = 4;
             using (var bufferManager = new BufferManager(context))

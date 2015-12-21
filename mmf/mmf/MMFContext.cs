@@ -16,9 +16,7 @@ namespace mmf.context
         public bool UseDefaultAllocation { get; set; }
         #endregion
 
-        private MMFContext() { Init(); }
-        public readonly static MMFContext Instance = new MMFContext();
-
+        public MMFContext() { Init(); }
         private void Init()
         {
             this.BufferSize = Settings.Default.kBufferSize;

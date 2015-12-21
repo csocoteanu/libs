@@ -16,7 +16,7 @@ namespace mmf.tests
         [TestMethod]
         public void SingleObject_ReferenceCheck()
         {
-            using (var studentPool = new ObjectPool<Student>(mmf.context.MMFContext.Instance))
+            using (var studentPool = new ObjectPool<Student>(new mmf.context.MMFContext()))
             {
                 // create first object and release the memory
                 Student gigel = studentPool.New();
@@ -56,7 +56,7 @@ namespace mmf.tests
         public void TestSingleObject_SingleAllocation()
         {
             Debug.WriteLine("Total memory before allocations: " + GC.GetTotalMemory(true));
-            using (var studentPool = new ObjectPool<Student>(mmf.context.MMFContext.Instance))
+            using (var studentPool = new ObjectPool<Student>(new mmf.context.MMFContext()))
             {
                 Student gigel = studentPool.New();
                 gigel.Name = "Gigi";
@@ -84,7 +84,7 @@ namespace mmf.tests
             int allocationCount = 1000000;
             long totalMemoryBeforeAllocation = 0, totalMemoryAfterAllocation = 0;
             long memDefaultAllocator = 0, memNewAllocator = 0;
-            var context = mmf.context.MMFContext.Instance;
+            var context = new mmf.context.MMFContext();
 
             Debug.WriteLine("Allocating {0} objects of type {1}...", allocationCount, typeof(Student).Name);
 
