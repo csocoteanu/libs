@@ -11,12 +11,18 @@ namespace mmf_tests
     public class BufferManagerTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void BasicAllocations()
         {
             var context = mmf.context.MMFContext.Instance;
+            context.BufferCount = 2;
+            context.BufferSize = 4;
             using (var bufferManager = new BufferManager(context))
             {
-                var buffer = bufferManager.GetBuffer();
+                var buffer1 = bufferManager.GetBuffer();
+                var buffer2 = bufferManager.GetBuffer();
+                var buffer3 = bufferManager.GetBuffer();
+
+                Assert.IsNull(buffer3, "After {0} allocations the returned buffer should be null" , context.BufferCount + 1);
             }
         }
     }
