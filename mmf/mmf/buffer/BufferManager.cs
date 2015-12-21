@@ -63,10 +63,15 @@ namespace mmf.buffer
         /// by making the used index available for the next get operations
         /// </summary>
         /// <param name="buffer"></param>
-        public void FreeBuffer(ArraySegment<byte> buffer)
+        public void FreeBuffer(ref ArraySegment<byte>? buffer)
         {
-            int bufferIndex = buffer.Offset / m_pageSize;
-            m_generator.ReleaseIndex(bufferIndex);
+            if (buffer.HasValue)
+            {
+                int bufferIndex = buffer.Value.Offset / m_pageSize;
+                m_generator.ReleaseIndex(bufferIndex);
+
+                buffer = null;
+            }
         }
 
         #region IDisposable Members
