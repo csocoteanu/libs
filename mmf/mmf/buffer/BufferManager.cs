@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using mmf.context;
 using mmf.exceptions;
+using mmf.common;
 
 namespace mmf.buffer
 {
@@ -44,23 +45,19 @@ namespace mmf.buffer
         /// otherwise return a null subsection.
         /// </summary>
         /// <returns></returns>
-        public ArraySegment<byte>? GetBuffer()
+        public ArraySegment<byte> GetBuffer()
         {
             int? freeIndex = m_generator.GetNextFreeIndex();
-            ArraySegment<byte>? newBuffer = null;
-
             if (freeIndex.HasValue)
             {
                 // get the proper offset, based on page size
                 int offset = freeIndex.Value * m_pageSize;
-                newBuffer = new ArraySegment<byte>(this.m_bufferSpace, offset, m_pageSize);
+                return new ArraySegment<byte>(this.m_bufferSpace, offset, m_pageSize);
             }
             else
             {
-                throw new BufferManagerOutOfSpace("Reached maximum number of allocations: " + this.m_pageCount);
+                throw new BufferManagerOOM(string.Format(Constants.kMaxAllocations_FMT, this.m_pageCount));
             }
-
-            return newBuffer;
         }
 
         /// <summary>
@@ -68,14 +65,27 @@ namespace mmf.buffer
         /// by making the used index available for the next get operations
         /// </summary>
         /// <param name="buffer"></param>
-        public void FreeBuffer(ref ArraySegment<byte>? buffer)
+        public void FreeBuffer(ref ArraySegment<byte> buffer)
         {
-            if (buffer.HasValue)
-            {
-                int? bufferIndex = buffer.Value.Offset / m_pageSize;
-                m_generator.ReleaseIndex(ref bufferIndex);
+            ValidateBuffer(buffer);
 
-                buffer = null;
+            int? bufferIndex = buffer.Offset / m_pageSize;
+            m_generator.ReleaseIndex(ref bufferIndex);
+
+            buffer = default(ArraySegment<byte>);
+        }
+
+        private void ValidateBuffer(ArraySegment<byte> buffer)
+        {
+            if (buffer.Array == null)
+                throw new ArgumentException(string.Format(Constants.kInvalidArg_FMT, "buffer.Array"));
+            if (buffer.Count != m_pageSize)
+                throw new ArgumentException(string.Format(Constants.kInvalidArg_FMT, "buffer.Count"));
+            if (buffer.Offset < 0 ||
+                buffer.Offset >= m_bufferSpace.Length ||
+                buffer.Offset % m_pageSize != 0)
+            {
+                throw new ArgumentException(string.Format(Constants.kInvalidArg_FMT, "buffer.Offset"));
             }
         }
 
