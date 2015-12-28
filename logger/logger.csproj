@@ -40,9 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logger.cs" />
+    <Compile Include="common\Constants.cs" />
+    <Compile Include="config\Configurator.cs" />
+    <Compile Include="logger\ILogger.cs" />
+    <Compile Include="logger\Logger.cs" />
+    <Compile Include="logger\LogLevel.cs" />
+    <Compile Include="logger\LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

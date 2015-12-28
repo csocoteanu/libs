@@ -5,7 +5,12 @@ using System.Text;
 
 namespace logger
 {
-    public class Logger
+    public enum eLogLevel
     {
+        kAll,
+        kDebug,
+        kInfo,
+        kWarn,
+        kError,
     }
 }
