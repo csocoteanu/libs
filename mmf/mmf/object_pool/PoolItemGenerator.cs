@@ -39,13 +39,18 @@ namespace mmf.pool
         #region ItemGenerator
         protected override T CreateItemCB()
         {
-            return new T();
+            T newItem = new T();
+            newItem.Init();
+            return newItem;
         }
-
         protected override void DisposeItemCB(T item)
         {
             item.Reset();
             item.Dispose();
+        }
+        protected override void ResetItemCB(T item)
+        {
+            item.Reset();
         }
         #endregion
     }

@@ -40,7 +40,7 @@ namespace mmf.buffer
         {
             return AllItemsCount;
         }
-
+        protected override void ResetItemCB(int? item) { }
         protected override void DisposeItemCB(int? item) { }
         #endregion
     }

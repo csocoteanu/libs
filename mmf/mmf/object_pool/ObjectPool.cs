@@ -24,6 +24,7 @@ namespace mmf.pool
         where T : class, IPoolableObject, new()
     {
         #region Members
+        private bool m_useOldAllocator = false;
         private int m_itemPoolSize = 0;
         private MMFContext m_context = null;
         private PoolItemGenerator<T> m_itemGenerator = null;
@@ -33,6 +34,7 @@ namespace mmf.pool
         private void Init(MMFContext context)
         {
             m_context = context;
+            m_useOldAllocator = m_context.UseDefaultAllocation;
             m_itemPoolSize = m_context.ObjectPoolCount;
             m_itemGenerator = new PoolItemGenerator<T>(m_itemPoolSize);
         }
@@ -43,6 +45,9 @@ namespace mmf.pool
         /// <returns></returns>
         public T New()
         {
+            if (m_useOldAllocator)
+                return new T();
+
             return m_itemGenerator.GenerateNewItem();
         }
 
@@ -52,7 +57,8 @@ namespace mmf.pool
         /// <param name="item"></param>
         public void Free(T item)
         {
-            m_itemGenerator.ReleaseItem(ref item);            
+            if (!m_useOldAllocator)
+                m_itemGenerator.ReleaseItem(ref item);            
         }
 
         #region IDisposable Members

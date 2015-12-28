@@ -22,6 +22,7 @@ namespace mmf.common
 
         #region Abstract Methods
         protected abstract T CreateItemCB();
+        protected abstract void ResetItemCB(T item);
         protected abstract void DisposeItemCB(T item);
         #endregion
 
@@ -44,17 +45,19 @@ namespace mmf.common
         {
             lock (this)
             {
+                T item = default(T);
+
                 if (m_freeItems.Count > 0)
                 {
-                    return m_freeItems.Dequeue();
+                    item = m_freeItems.Dequeue();
                 }
                 else
                 {
-                    if (AllItemsCount == MaxItemCount)
-                        return default(T);
-
-                    return CreateNewItem();
+                    if (AllItemsCount < MaxItemCount)
+                        item = CreateNewItem();
                 }
+
+                return item;
             }
         }
 
@@ -62,6 +65,7 @@ namespace mmf.common
         {
             lock (this)
             {
+                ResetItemCB(item);
                 m_freeItems.Enqueue(item);
                 item = default(T); 
             }
