@@ -35,9 +35,13 @@ namespace mmf.buffer
             this.FreeItem(ref index);
         }
 
+        #region ItemGenerator
         protected override int? CreateItemCB()
         {
             return AllItemsCount;
         }
+
+        protected override void DisposeItemCB(int? item) { }
+        #endregion
     }
 }

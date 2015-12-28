@@ -21,7 +21,8 @@ namespace mmf.common
         #endregion
 
         #region Abstract Methods
-        protected abstract T CreateItemCB(); 
+        protected abstract T CreateItemCB();
+        protected abstract void DisposeItemCB(T item);
         #endregion
 
         public ItemGenerator(int maxItems)
@@ -69,6 +70,11 @@ namespace mmf.common
         #region IDisposable Members
         public void Dispose()
         {
+            foreach (T item in m_freeItems)
+            {
+                DisposeItemCB(item);
+            }
+
             AllItemsCount = MaxItemCount = 0;
             m_freeItems.Clear();
         }
