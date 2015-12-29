@@ -3,76 +3,136 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using logger.common;
 
 namespace logger
 {
     internal class Logger : ILogger
     {
         #region members
+        private string m_loggerType = null;
+        private string m_loggerFolder = null;
+        private string m_loggerPath = null;
+
         private TextWriter m_writter = null;
         #endregion
 
-        public Logger()
-        {            
+        public Logger(string loggerType) { Init(loggerType); }
+        private void Init(string loggerType)
+        {
+            this.m_loggerType = loggerType;
+
+            CreateLoggerPath(this.m_loggerType, ref this.m_loggerFolder, ref this.m_loggerPath);
+            this.m_writter = CreateOrOpenExisting(this.m_loggerFolder, this.m_loggerPath);
         }
 
         #region ILogger Members
-
         public void Debug(string format, params string[] args)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kDebug, LogTime, format, args);
         }
         public void Debug(string message)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kDebug, LogTime, message);
         }
 
         public void Info(string format, params string[] args)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kInfo, LogTime, format, args);
         }
         public void Info(string message)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kInfo, LogTime, message);
         }
 
         public void Warn(string format, params string[] args)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kWarn, LogTime, format, args);
         }
         public void Warn(string message)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kWarn, LogTime, message);
         }
 
         public void Error(string format, params string[] args)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kError, LogTime, format, args);
         }
         public void Error(string message)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kInfo, LogTime, message);
         }
 
         public void Fatal(string format, params string[] args)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kFatal, LogTime, format, args);
         }
         public void Fatal(string message)
         {
-            throw new NotImplementedException();
+            ToLogFormat(Constants.kInfo, LogTime, message);
         }
-
         #endregion
 
-        public void Write(string message)
+        #region Inner methods
+        private string LogTime
         {
-            lock (this) { m_writter.Write(message); }
+            get { return DateTime.Now.ToLongDateString(); }
         }
 
-        public void Write(string format, params string[] arguments)
+        private void CreateLoggerPath(string loggerType, ref string loggerFolder, ref string loggerPath)
         {
-            lock (this) { m_writter.Write(format, arguments); }
+            string tempPath = Path.GetTempPath();
+            string logName = string.Format("{0}{1}", loggerType, Constants.kLogExtension);
+
+            loggerFolder = Path.Combine(tempPath, Constants.kLogFolder);
+            loggerPath = Path.Combine(loggerFolder, logName);
         }
+
+        private TextWriter CreateOrOpenExisting(string loggerFolder, string loggerPath)
+        {
+            if (!Directory.Exists(loggerFolder))
+                Directory.CreateDirectory(loggerFolder);
+            if (!File.Exists(loggerPath))
+                File.Create(loggerPath);
+
+            return File.AppendText(loggerPath);
+        }
+
+        private void ToLogFormat(string logMethod, string logTime, string message)
+        {
+            string text = string.Format("[{0} - {1}]: {2}\r\n",
+                                        logMethod,
+                                        logTime,
+                                        message);
+            WriteLn(text);
+        }
+        private void ToLogFormat(string logMethod, string logTime, string format, params string[] args)
+        {
+            string text = string.Format("[{0} - {1}]: {2}\r\n",
+                                        logMethod,
+                                        logTime,
+                                        string.Format(format, args));
+            WriteLn(text);
+        }
+
+        private void WriteLn(string text)
+        {
+            lock (this) { m_writter.WriteLine(text); }
+        }
+        #endregion
+
+        #region IDisposable Members
+        /// <summary>
+        /// TODO: remove logger from the log manager
+        /// </summary>
+        public void Dispose()
+        {
+            lock (this)
+            {
+                m_writter.Close();
+                m_writter.Dispose(); 
+            }
+        }
+        #endregion
     }
 }

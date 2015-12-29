@@ -5,7 +5,7 @@ using System.Text;
 
 namespace logger
 {
-    public interface ILogger
+    public interface ILogger : IDisposable
     {
         void Debug(string format, params string[] args);
         void Debug(string message);
