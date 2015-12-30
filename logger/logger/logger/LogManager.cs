@@ -30,9 +30,23 @@ namespace logger
                    : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         }
 
+        private void OnLoggerDispose(object sender, EventArgs e)
+        {
+            lock (this)
+            {
+                ILogger logger = (ILogger)sender;
+                string lookupType = logger.LoggerRootType;
+
+                logger.OnDispose -= OnLoggerDispose;
+                this.m_allLoggers.Remove(lookupType);
+            }
+        }
+
         private ILogger CreateLogger(string loggerType)
         {
-            return new Logger(loggerType);
+            ILogger logger = new Logger(loggerType);
+            logger.OnDispose += OnLoggerDispose;
+            return logger;
         }
         #endregion
 
@@ -63,10 +77,13 @@ namespace logger
 
         public static void DoCleanup()
         {
-            foreach (var logger in ms_Instance.m_allLoggers)
-                logger.Value.Dispose();
+            lock (ms_Instance)
+            {
+                foreach (var logger in ms_Instance.m_allLoggers)
+                    logger.Value.Dispose();
 
-            ms_Instance.m_allLoggers.Clear();
+                ms_Instance.m_allLoggers.Clear(); 
+            }
         }
     }
 }

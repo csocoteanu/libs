@@ -1,9 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logger", "logger.csproj", "{ADEC3F4F-7969-473F-AEDD-47AD6D16E410}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logger", "logger", "{FA8DB39D-5FDF-4C9E-912F-8FA535DBC852}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logger", "logger\logger.csproj", "{ADEC3F4F-7969-473F-AEDD-47AD6D16E410}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{54B59736-F914-4109-8338-E85E639464F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests\tests.csproj", "{33F24720-4672-4E38-A7BA-D7F6822D6DC3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ADEC3F4F-7969-473F-AEDD-47AD6D16E410} = {ADEC3F4F-7969-473F-AEDD-47AD6D16E410}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B5A52DD-9516-4D4F-A066-9985DE2598B3}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		logger.vsmdi = logger.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
 EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = logger.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -13,8 +32,17 @@ Global
 		{ADEC3F4F-7969-473F-AEDD-47AD6D16E410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADEC3F4F-7969-473F-AEDD-47AD6D16E410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADEC3F4F-7969-473F-AEDD-47AD6D16E410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33F24720-4672-4E38-A7BA-D7F6822D6DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33F24720-4672-4E38-A7BA-D7F6822D6DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33F24720-4672-4E38-A7BA-D7F6822D6DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33F24720-4672-4E38-A7BA-D7F6822D6DC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ADEC3F4F-7969-473F-AEDD-47AD6D16E410} = {FA8DB39D-5FDF-4C9E-912F-8FA535DBC852}
+		{33F24720-4672-4E38-A7BA-D7F6822D6DC3} = {54B59736-F914-4109-8338-E85E639464F7}
+		{8B5A52DD-9516-4D4F-A066-9985DE2598B3} = {54B59736-F914-4109-8338-E85E639464F7}
 	EndGlobalSection
 EndGlobal

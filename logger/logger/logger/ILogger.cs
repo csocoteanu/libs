@@ -7,6 +7,11 @@ namespace logger
 {
     public interface ILogger : IDisposable
     {
+        event EventHandler<EventArgs> OnDispose;
+
+        eLogLevel LogLevel { get; }
+        string LoggerRootType { get; }
+
         void Debug(string format, params string[] args);
         void Debug(string message);
         void Info(string format, params string[] args);

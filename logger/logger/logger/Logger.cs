@@ -27,6 +27,11 @@ namespace logger
         }
 
         #region ILogger Members
+        public event EventHandler<EventArgs> OnDispose;
+
+        public string LoggerRootType { get { return m_loggerType; } }
+        public eLogLevel LogLevel { get { return eLogLevel.kAll; } }
+
         public void Debug(string format, params string[] args)
         {
             ToLogFormat(Constants.kDebug, LogTime, format, args);
@@ -76,7 +81,11 @@ namespace logger
         #region Inner methods
         private string LogTime
         {
-            get { return DateTime.Now.ToLongDateString(); }
+            get
+            {
+                DateTime now = DateTime.Now;
+                return string.Format("{0} {1}", now.ToShortDateString(), now.ToLongTimeString());
+            }
         }
 
         private void CreateLoggerPath(string loggerType, ref string loggerFolder, ref string loggerPath)
@@ -93,14 +102,14 @@ namespace logger
             if (!Directory.Exists(loggerFolder))
                 Directory.CreateDirectory(loggerFolder);
             if (!File.Exists(loggerPath))
-                File.Create(loggerPath);
-
+                return new StreamWriter(File.Create(loggerPath));
+            
             return File.AppendText(loggerPath);
         }
 
         private void ToLogFormat(string logMethod, string logTime, string message)
         {
-            string text = string.Format("[{0} - {1}]: {2}\r\n",
+            string text = string.Format("[{0} - {1}]: {2}",
                                         logMethod,
                                         logTime,
                                         message);
@@ -108,7 +117,7 @@ namespace logger
         }
         private void ToLogFormat(string logMethod, string logTime, string format, params string[] args)
         {
-            string text = string.Format("[{0} - {1}]: {2}\r\n",
+            string text = string.Format("[{0} - {1}]: {2}",
                                         logMethod,
                                         logTime,
                                         string.Format(format, args));
@@ -121,16 +130,16 @@ namespace logger
         }
         #endregion
 
-        #region IDisposable Members
-        /// <summary>
-        /// TODO: remove logger from the log manager
-        /// </summary>
+        #region IDisposable Members        
         public void Dispose()
         {
             lock (this)
             {
                 m_writter.Close();
-                m_writter.Dispose(); 
+                m_writter.Dispose();
+
+                if (this.OnDispose != null)
+                    this.OnDispose(this, null);
             }
         }
         #endregion
