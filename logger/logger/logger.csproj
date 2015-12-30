@@ -41,14 +41,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="common\Constants.cs" />
+    <Compile Include="common\Extensions.cs" />
     <Compile Include="config\Configurator.cs" />
     <Compile Include="logger\ILogger.cs" />
     <Compile Include="logger\Logger.cs" />
     <Compile Include="logger\LogLevel.cs" />
     <Compile Include="logger\LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

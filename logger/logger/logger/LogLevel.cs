@@ -7,10 +7,11 @@ namespace logger
 {
     public enum eLogLevel
     {
-        kAll,
-        kDebug,
+        kFatal,
+        kError,
         kInfo,
         kWarn,
-        kError,
+        kDebug,
+        kAll
     }
 }

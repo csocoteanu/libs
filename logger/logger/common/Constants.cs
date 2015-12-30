@@ -12,6 +12,7 @@ namespace logger.common
         internal const string kWarn = "WARN";
         internal const string kError = "ERROR";
         internal const string kFatal = "FATAL";
+        internal const string kALL = "ALL";
 
         internal const string kLogFolder = "logs";
         internal const string kLogExtension = ".log";

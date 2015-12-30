@@ -14,6 +14,7 @@ namespace logger
         private string m_loggerFolder = null;
         private string m_loggerPath = null;
 
+        private eLogLevel m_logLevel = eLogLevel.kAll;
         private TextWriter m_writter = null;
         #endregion
 
@@ -21,6 +22,7 @@ namespace logger
         private void Init(string loggerType)
         {
             this.m_loggerType = loggerType;
+            this.m_logLevel = config.Configurator.Instance.LogLevel;
 
             CreateLoggerPath(this.m_loggerType, ref this.m_loggerFolder, ref this.m_loggerPath);
             this.m_writter = CreateOrOpenExisting(this.m_loggerFolder, this.m_loggerPath);
@@ -30,51 +32,51 @@ namespace logger
         public event EventHandler<EventArgs> OnDispose;
 
         public string LoggerRootType { get { return m_loggerType; } }
-        public eLogLevel LogLevel { get { return eLogLevel.kAll; } }
+        public eLogLevel LogLevel { get { return m_logLevel; } }
 
         public void Debug(string format, params string[] args)
         {
-            ToLogFormat(Constants.kDebug, LogTime, format, args);
+            ToLogFormat(eLogLevel.kDebug, LogTime, format, args);
         }
         public void Debug(string message)
         {
-            ToLogFormat(Constants.kDebug, LogTime, message);
+            ToLogFormat(eLogLevel.kDebug, LogTime, message);
         }
 
         public void Info(string format, params string[] args)
         {
-            ToLogFormat(Constants.kInfo, LogTime, format, args);
+            ToLogFormat(eLogLevel.kInfo, LogTime, format, args);
         }
         public void Info(string message)
         {
-            ToLogFormat(Constants.kInfo, LogTime, message);
+            ToLogFormat(eLogLevel.kInfo, LogTime, message);
         }
 
         public void Warn(string format, params string[] args)
         {
-            ToLogFormat(Constants.kWarn, LogTime, format, args);
+            ToLogFormat(eLogLevel.kWarn, LogTime, format, args);
         }
         public void Warn(string message)
         {
-            ToLogFormat(Constants.kWarn, LogTime, message);
+            ToLogFormat(eLogLevel.kWarn, LogTime, message);
         }
 
         public void Error(string format, params string[] args)
         {
-            ToLogFormat(Constants.kError, LogTime, format, args);
+            ToLogFormat(eLogLevel.kError, LogTime, format, args);
         }
         public void Error(string message)
         {
-            ToLogFormat(Constants.kInfo, LogTime, message);
+            ToLogFormat(eLogLevel.kError, LogTime, message);
         }
 
         public void Fatal(string format, params string[] args)
         {
-            ToLogFormat(Constants.kFatal, LogTime, format, args);
+            ToLogFormat(eLogLevel.kFatal, LogTime, format, args);
         }
         public void Fatal(string message)
         {
-            ToLogFormat(Constants.kInfo, LogTime, message);
+            ToLogFormat(eLogLevel.kFatal, LogTime, message);
         }
         #endregion
 
@@ -107,21 +109,15 @@ namespace logger
             return File.AppendText(loggerPath);
         }
 
-        private void ToLogFormat(string logMethod, string logTime, string message)
+        private void ToLogFormat(eLogLevel logLevel, string logTime, string message)
         {
-            string text = string.Format("[{0} - {1}]: {2}",
-                                        logMethod,
-                                        logTime,
-                                        message);
-            WriteLn(text);
+            string logMethod = logLevel.Stringify(this.LogLevel);
+            if (!string.IsNullOrEmpty(logMethod))
+                WriteLn(string.Format("[{0} - {1}]: {2}", logMethod, logTime, message)); 
         }
-        private void ToLogFormat(string logMethod, string logTime, string format, params string[] args)
+        private void ToLogFormat(eLogLevel logLevel, string logTime, string format, params string[] args)
         {
-            string text = string.Format("[{0} - {1}]: {2}",
-                                        logMethod,
-                                        logTime,
-                                        string.Format(format, args));
-            WriteLn(text);
+            ToLogFormat(logLevel, logTime, string.Format(format, args));
         }
 
         private void WriteLn(string text)
@@ -130,7 +126,7 @@ namespace logger
         }
         #endregion
 
-        #region IDisposable Members        
+        #region IDisposable Members
         public void Dispose()
         {
             lock (this)
