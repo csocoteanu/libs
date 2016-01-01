@@ -11,11 +11,13 @@ namespace logger.config
     {
         public static readonly Configurator Instance = new Configurator();
         public eLogLevel LogLevel { get; set; }
+        public eLogType LogType { get; set; }
 
         private Configurator() { Init(); }
         private void Init()
         {
             this.LogLevel = Settings.Default.kLogLevel.ToLogLevel();
+            this.LogType = eLogType.kFile;
         }
     }
 }

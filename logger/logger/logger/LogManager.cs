@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using logger.common;
+using logger.config;
 
 namespace logger
 {
@@ -14,13 +16,13 @@ namespace logger
     public class LogManager
     {
         #region Members
-        private Dictionary<string, ILogger> m_allLoggers = null;
+        private Dictionary<string, AbstractLogger> m_allLoggers = null;
         private static readonly LogManager ms_Instance = new LogManager();
 
         private LogManager() { Init(); }
         private void Init()
         {
-            m_allLoggers = new Dictionary<string, ILogger>();
+            m_allLoggers = new Dictionary<string, AbstractLogger>();
         }
 
         private string ToLookupString(Type classType)
@@ -34,7 +36,7 @@ namespace logger
         {
             lock (this)
             {
-                ILogger logger = (ILogger)sender;
+                AbstractLogger logger = (AbstractLogger)sender;
                 string lookupType = logger.LoggerRootType;
 
                 logger.OnDispose -= OnLoggerDispose;
@@ -42,9 +44,9 @@ namespace logger
             }
         }
 
-        private ILogger CreateLogger(string loggerType)
+        private AbstractLogger CreateLogger(string loggerType)
         {
-            ILogger logger = new Logger(loggerType);
+            AbstractLogger logger = LoggerFactory.CreateLogger(Configurator.Instance.LogType, loggerType);
             logger.OnDispose += OnLoggerDispose;
             return logger;
         }
@@ -63,7 +65,7 @@ namespace logger
             lock (ms_Instance)
             {
                 string lookupString = ms_Instance.ToLookupString(classType);
-                ILogger logger = null;
+                AbstractLogger logger = null;
 
                 if (!ms_Instance.m_allLoggers.TryGetValue(lookupString, out logger))
                 {

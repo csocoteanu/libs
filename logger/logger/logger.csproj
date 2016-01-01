@@ -42,10 +42,15 @@
   <ItemGroup>
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\Extensions.cs" />
+    <Compile Include="common\LogType.cs" />
     <Compile Include="config\Configurator.cs" />
+    <Compile Include="logger\IDisposableLogger.cs" />
     <Compile Include="logger\ILogger.cs" />
-    <Compile Include="logger\Logger.cs" />
-    <Compile Include="logger\LogLevel.cs" />
+    <Compile Include="logger\AbstractLogger.cs" />
+    <Compile Include="logger\loggers\ConsoleLogger.cs" />
+    <Compile Include="logger\loggers\Logger.cs" />
+    <Compile Include="common\LogLevel.cs" />
+    <Compile Include="logger\loggers\LoggerFactory.cs" />
     <Compile Include="logger\LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

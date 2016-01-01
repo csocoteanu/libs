@@ -5,13 +5,8 @@ using System.Text;
 
 namespace logger
 {
-    public enum eLogLevel
+    internal interface IDisposableLogger : IDisposable
     {
-        kFatal,
-        kError,
-        kInfo,
-        kWarn,
-        kDebug,
-        kAll
+        event EventHandler<EventArgs> OnDispose;
     }
 }

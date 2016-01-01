@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using logger.common;
 
 namespace logger
 {
     public interface ILogger : IDisposable
     {
-        event EventHandler<EventArgs> OnDispose;
-
         eLogLevel LogLevel { get; }
         string LoggerRootType { get; }
 

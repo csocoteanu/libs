@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using logger;
 using logger.config;
+using logger.common;
 
 namespace tests
 {

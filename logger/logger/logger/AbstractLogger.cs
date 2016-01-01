@@ -7,26 +7,27 @@ using logger.common;
 
 namespace logger
 {
-    internal class Logger : ILogger
+    internal abstract class AbstractLogger : ILogger, IDisposableLogger
     {
         #region members
-        private string m_loggerType = null;
-        private string m_loggerFolder = null;
-        private string m_loggerPath = null;
-
-        private eLogLevel m_logLevel = eLogLevel.kAll;
-        private TextWriter m_writter = null;
+        protected string m_loggerType = null;
+        protected eLogLevel m_logLevel = eLogLevel.kAll;
         #endregion
 
-        public Logger(string loggerType) { Init(loggerType); }
+        public AbstractLogger(string loggerType) { Init(loggerType); }
         private void Init(string loggerType)
         {
             this.m_loggerType = loggerType;
             this.m_logLevel = config.Configurator.Instance.LogLevel;
 
-            CreateLoggerPath(this.m_loggerType, ref this.m_loggerFolder, ref this.m_loggerPath);
-            this.m_writter = CreateOrOpenExisting(this.m_loggerFolder, this.m_loggerPath);
+            this.OnInitLogger();
         }
+
+        #region Abstract Methods
+        protected abstract void OnInitLogger();
+        protected abstract void Writeline(string text);
+        protected abstract void DoCleanup();
+        #endregion
 
         #region ILogger Members
         public event EventHandler<EventArgs> OnDispose;
@@ -90,39 +91,20 @@ namespace logger
             }
         }
 
-        private void CreateLoggerPath(string loggerType, ref string loggerFolder, ref string loggerPath)
-        {
-            string tempPath = Path.GetTempPath();
-            string logName = string.Format("{0}{1}", loggerType, Constants.kLogExtension);
-
-            loggerFolder = Path.Combine(tempPath, Constants.kLogFolder);
-            loggerPath = Path.Combine(loggerFolder, logName);
-        }
-
-        private TextWriter CreateOrOpenExisting(string loggerFolder, string loggerPath)
-        {
-            if (!Directory.Exists(loggerFolder))
-                Directory.CreateDirectory(loggerFolder);
-            if (!File.Exists(loggerPath))
-                return new StreamWriter(File.Create(loggerPath));
-            
-            return File.AppendText(loggerPath);
-        }
-
         private void ToLogFormat(eLogLevel logLevel, string logTime, string message)
         {
             string logMethod = logLevel.Stringify(this.LogLevel);
             if (!string.IsNullOrEmpty(logMethod))
-                WriteLn(string.Format("[{0} - {1}]: {2}", logMethod, logTime, message)); 
+                Writeline_sync(string.Format("[{0} - {1}]: {2}", logMethod, logTime, message)); 
         }
         private void ToLogFormat(eLogLevel logLevel, string logTime, string format, params string[] args)
         {
             ToLogFormat(logLevel, logTime, string.Format(format, args));
         }
 
-        private void WriteLn(string text)
+        private void Writeline_sync(string text)
         {
-            lock (this) { m_writter.WriteLine(text); }
+            lock (this) { this.Writeline(text); }
         }
         #endregion
 
@@ -131,8 +113,7 @@ namespace logger
         {
             lock (this)
             {
-                m_writter.Close();
-                m_writter.Dispose();
+                this.DoCleanup();
 
                 if (this.OnDispose != null)
                     this.OnDispose(this, null);
