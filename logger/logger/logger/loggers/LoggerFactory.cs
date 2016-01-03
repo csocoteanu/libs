@@ -13,9 +13,9 @@ namespace logger
             switch (logType)
             {
                 case eLogType.kStdOut:
-                    return new Logger(rootType);
-                case eLogType.kFile:
                     return new ConsoleLogger(rootType);
+                case eLogType.kFile:
+                    return new Logger(rootType);
             }
 
             return null;

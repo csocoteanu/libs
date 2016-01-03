@@ -16,5 +16,8 @@ namespace logger.common
 
         internal const string kLogFolder = "logs";
         internal const string kLogExtension = ".log";
+        internal const int kMaxLogCount = 10;
+
+        internal const int KBMultiplier = 1024;
     }
 }

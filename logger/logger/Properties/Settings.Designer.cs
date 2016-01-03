@@ -31,5 +31,14 @@ namespace logger.Properties {
                 return ((string)(this["kLogLevel"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1024")]
+        public int kLogSize {
+            get {
+                return ((int)(this["kLogSize"]));
+            }
+        }
     }
 }

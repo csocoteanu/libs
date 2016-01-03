@@ -47,5 +47,10 @@ namespace logger.common
 
             throw new InvalidOperationException(string.Format("Invalid log level provided: {0}", thLogLevelString));
         }
+
+        public static int KBMultiply(this int thValue)
+        {
+            return thValue * Constants.KBMultiplier;
+        }
     }
 }

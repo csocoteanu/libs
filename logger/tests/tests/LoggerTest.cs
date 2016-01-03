@@ -16,6 +16,7 @@ namespace tests
         public void TestMethod1()
         {
             Configurator.Instance.LogLevel = eLogLevel.kAll;
+            Configurator.Instance.LogSizeKB = 20;
             using (var logger = LogManager.GetLogger())
             {
                 logger.Debug("debug1");
