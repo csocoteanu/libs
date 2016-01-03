@@ -76,12 +76,6 @@
     <Compile Include="Tests\TestSimpleClass.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GenericSerializer\GenericSerializer.csproj">
-      <Project>{A6E7359F-F0AF-4916-8B29-0DAD0C4C86F3}</Project>
-      <Name>GenericSerializer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -92,6 +86,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\generic_serializer\generic_serializer.csproj">
+      <Project>{A6E7359F-F0AF-4916-8B29-0DAD0C4C86F3}</Project>
+      <Name>generic_serializer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
